@@ -32,7 +32,7 @@ public class Client {
 
     public void start() {
         try {
-            System.out.println("Benvenuto a RPG a OGGETTI!!");
+            System.out.println("Benvenuto a RPG a OGGETTI!!!");
             System.out.println("Scegli un'opzione:");
             System.out.println("1. Accedi");
             System.out.println("2. Registrati");

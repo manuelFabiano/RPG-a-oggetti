@@ -4,10 +4,9 @@ import java.net.Socket;
 
 public class Server {
     private static final int PORT = 1234;
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args){
         try {
-            GestoreDb gestoreDb = new GestoreDb();
-            gestoreDb.connetti("mongodb://localhost:27017", "RPG", "Players");
+            GestoreDb gestoreDb = new GestoreDb("mongodb://localhost:27017", "RPG", "Players");
 
             ServerSocket serverSocket = new ServerSocket(PORT);
             System.out.println("Server avviato. In attesa di connessioni...");

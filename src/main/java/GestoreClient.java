@@ -5,11 +5,10 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 public class GestoreClient implements Runnable {
-    private Socket clientSocket;
-    private GestoreDb gestoreDb;
+    private final Socket clientSocket;
+    private final GestoreDb gestoreDb;
     private BufferedReader input;
     private PrintWriter output;
-    int choice;
 
     public GestoreClient(Socket clientSocket, GestoreDb gestoreDb) {
         this.clientSocket = clientSocket;
@@ -25,21 +24,22 @@ public class GestoreClient implements Runnable {
     @Override
     public void run() {
         try {
+            stampaMenuLogin();
             // Logica di gestione della comunicazione con il client
             String clientMessage;
             while ((clientMessage = input.readLine()) != null) {
                 System.out.println("Messaggio dal client: " + clientMessage);
                 switch (clientMessage) {
-                    case "LOGIN":
+                    case "1":
+                        gestioneLogin();
                         break;
-                    case "REGISTER":
-                        gestoreRegister();
+                    case "2":
+                        gestioneRegister();
                         break;
                     default:
                         break;
                 }
             }
-
             // Chiudi le risorse
             input.close();
             output.close();
@@ -49,12 +49,76 @@ public class GestoreClient implements Runnable {
         }
     }
 
-    private void gestoreRegister() throws IOException{
+    private void MenuGioco() throws IOException{
+        stampaMenuGioco();
+        String clientMessage;
+        while ((clientMessage = input.readLine()) != null) {
+            System.out.println("Messaggio dal client: " + clientMessage);
+            switch (clientMessage) {
+                case "1":
+                    //nuovapartita
+                    break;
+                case "2":
+                    //continua
+                    break;
+                case "3":
+                    //classifica
+                    break;
+                case "4":
+                    //esci
+                    break;
+                default:
+                    break;
+            }
+        }
+
+    }
+
+    private void gestioneLogin() throws IOException{
+        output.println("Inserisci l'username:\nPASS");
         String username = input.readLine();
         System.out.println(username);
+        output.println("Inserisci una password\nPASS");
         String password = input.readLine();
         System.out.println(password);
 
-        gestoreDb.inserisciUtente(username,password);
+        if(gestoreDb.login(username, password)){
+            //stampamenuprincipale
+            System.out.println("menu");
+        }
+    }
+
+    private void gestioneRegister() throws IOException{
+        output.println("Inserisci l'username:\nPASS");
+        String username = input.readLine();
+        System.out.println(username);
+        output.println("Inserisci una password\nPASS");
+        String password = input.readLine();
+        System.out.println(password);
+
+        int res = gestoreDb.registraUtente(username, password);
+        if (res == 1){
+            //stampamenuprincipale
+            System.out.println("menu");
+        }
+    }
+
+    private void stampaMenuLogin() throws IOException{
+        output.println("Benvenuto a RPG a OGGETTI!\n" +
+                "Scegli un'opzione:\n" +
+                "1. Accedi\n" +
+                "2. Registrati\n" +
+                "3. Esci\n"+
+                "PASS");
+    }
+
+    private void stampaMenuGioco(){
+        output.println("Cosa vuoi fare?\n" +
+                "Scegli un'opzione:\n" +
+                "1. Nuova partita\n" +
+                "2. Continua\n" +
+                "3. Classifica\n" +
+                "4. Esci\n" +
+                "PASS");
     }
 }

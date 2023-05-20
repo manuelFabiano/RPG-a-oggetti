@@ -8,6 +8,8 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 
+import java.io.BufferedReader;
+import java.io.PrintWriter;
 import java.util.Map;
 
 public class GestoreDb {
@@ -44,21 +46,21 @@ public class GestoreDb {
         }
     }
 
-    public Document login(String username, String password) {
+    public int login(String username, String password, Document utente) {
         try{
-            Document utente = collection.find(Filters.eq("username", username)).first();
+            utente = collection.find(Filters.eq("username", username)).first();
 
             if (utente != null && utente.getString("password").equals(password)) {
                 System.out.println("Accesso effettuato con successo!");
-                return utente;
+                return 1;
             } else {
                 System.out.println("Username o password non validi.");
-                return null;
+                return 2;
             }
         } catch (Exception e) {
             System.err.println("Si è verificato un errore durante il login:");
             e.printStackTrace();
-            return null;
+            return -1;
         }
     }
 

@@ -28,14 +28,32 @@ public class Client {
 
                 // Invio della risposta al server
                 output.println(clientResponse);
+                svuotaSchermo();
                 }
             }
             // Chiusura delle risorse
             output.close();
             input.close();
             scanner.close();
+            System.out.println("risorse chiuse");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
+    public static void svuotaSchermo() {
+        String os = System.getProperty("os.name").toLowerCase();
+
+        try {
+            if (os.contains("win")) {
+                new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+            } else {
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

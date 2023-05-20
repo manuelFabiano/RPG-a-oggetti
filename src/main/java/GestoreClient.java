@@ -27,51 +27,65 @@ public class GestoreClient implements Runnable {
     @Override
     public void run() {
         try {
-            stampaMenuLogin();
-            // Logica di gestione della comunicazione con il client
             String clientMessage;
-            while ((clientMessage = input.readLine()) != null) {
-                System.out.println("Messaggio dal client: " + clientMessage);
-                switch (clientMessage) {
-                    case "1":
-                        gestioneLogin();
-                        break;
-                    case "2":
-                        gestioneRegister();
-                        break;
-                    default:
-                        break;
+            boolean exit = false;
+            while(!exit) {
+                stampaMenuLogin();
+                // Logica di gestione della comunicazione con il client
+                if((clientMessage = input.readLine()) != null){
+                    System.out.println("Messaggio dal client: " + clientMessage);
+                    switch (clientMessage) {
+                        case "1":{
+                            gestioneLogin();
+                            break; }
+                        case "2": {
+                            gestioneRegister();
+                            break;
+                        }
+                        case "3":{
+                            exit = true;
+                            System.out.println(exit);
+                            break;
+                        }
+                        default:
+                            break;
+                    }
                 }
             }
             // Chiudi le risorse
             input.close();
             output.close();
             clientSocket.close();
+            System.out.println("Risorse chiuse");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
+
     private void MenuGioco() throws IOException{
-        stampaMenuGioco();
+        boolean exit = false;
         String clientMessage;
-        while ((clientMessage = input.readLine()) != null) {
-            System.out.println("Messaggio dal client: " + clientMessage);
-            switch (clientMessage) {
-                case "1":
-                    Gioco gioco = new Gioco(input, output, gestoreDb, utente);
-                    break;
-                case "2":
-                    //continua
-                    break;
-                case "3":
-                    //classifica
-                    break;
-                case "4":
-                    //esci
-                    break;
-                default:
-                    break;
+        while(!exit) {
+            stampaMenuGioco();
+            if((clientMessage = input.readLine()) != null) {
+                System.out.println("Messaggio dal client: " + clientMessage);
+                switch (clientMessage) {
+                    case "1":
+                        Gioco gioco = new Gioco(input, output, gestoreDb, utente);
+                        break;
+                    case "2":
+                        //continua
+                        break;
+                    case "3":
+                        //classifica
+                        break;
+                    case "4":
+                        exit = true;
+                        break;
+                    default:
+                        break;
+                }
             }
         }
     }
@@ -83,9 +97,14 @@ public class GestoreClient implements Runnable {
         output.println("Inserisci una password\nPASS");
         String password = input.readLine();
         System.out.println(password);
-        utente = gestoreDb.login(username, password);
-        if(utente != null ){
+        Document utente = new Document();
+        int result = gestoreDb.login(username, password, utente);
+        if(result == 1){
             MenuGioco();
+        } else if (result == 2) {
+            output.println("Username o password non validi.");
+        } else if (result == -1) {
+            output.println("Si è verificato un errore durante il login");
         }
     }
 

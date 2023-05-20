@@ -8,6 +8,8 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 
+import java.util.Map;
+
 public class GestoreDb {
     private final MongoClient client;
     private final MongoDatabase database;
@@ -42,24 +44,46 @@ public class GestoreDb {
         }
     }
 
-    public boolean login(String username, String password) {
+    public Document login(String username, String password) {
         try{
             Document utente = collection.find(Filters.eq("username", username)).first();
 
             if (utente != null && utente.getString("password").equals(password)) {
                 System.out.println("Accesso effettuato con successo!");
-                return true;
+                return utente;
             } else {
                 System.out.println("Username o password non validi.");
-                return false;
+                return null;
             }
         } catch (Exception e) {
             System.err.println("Si è verificato un errore durante il login:");
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 
+    public void nuovaPartita(Document utente, Giocatore giocatore){
+        //Verifico se esistono già partite create dall'utente
+        int conteggio = 0;
+        for (Map.Entry<String, Object> entry : utente.entrySet()) {
+            String chiave = entry.getKey();
+            if (chiave.contains("partita")) {
+                conteggio++;
+            }
+        }
+        //Preparo il document da inserire
+        Document partita = new Document("roundCorrente", 1)
+                .append("puntiVita", giocatore.getPuntiVita())
+                .append("puntiAttacco", giocatore.getPuntiAttacco())
+                .append("puntiDifesa", giocatore.getPuntiDifesa())
+                .append("livello", giocatore.getLivello());
+
+        //Aggiorno il database
+        Document aggiornamento = new Document("$set", new Document("partita"+(conteggio+1), partita));
+        collection.updateOne(utente, aggiornamento);
+
+
+    }
 
     public void disconnetti() {
         client.close();

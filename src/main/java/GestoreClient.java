@@ -1,14 +1,17 @@
+import java.awt.*;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import org.bson.Document;
 
 public class GestoreClient implements Runnable {
     private final Socket clientSocket;
     private final GestoreDb gestoreDb;
     private BufferedReader input;
     private PrintWriter output;
+    private Document utente;
 
     public GestoreClient(Socket clientSocket, GestoreDb gestoreDb) {
         this.clientSocket = clientSocket;
@@ -56,7 +59,7 @@ public class GestoreClient implements Runnable {
             System.out.println("Messaggio dal client: " + clientMessage);
             switch (clientMessage) {
                 case "1":
-                    //nuovapartita
+                    Gioco gioco = new Gioco(input, output, gestoreDb, utente);
                     break;
                 case "2":
                     //continua
@@ -71,7 +74,6 @@ public class GestoreClient implements Runnable {
                     break;
             }
         }
-
     }
 
     private void gestioneLogin() throws IOException{
@@ -81,10 +83,9 @@ public class GestoreClient implements Runnable {
         output.println("Inserisci una password\nPASS");
         String password = input.readLine();
         System.out.println(password);
-
-        if(gestoreDb.login(username, password)){
-            //stampamenuprincipale
-            System.out.println("menu");
+        utente = gestoreDb.login(username, password);
+        if(utente != null ){
+            MenuGioco();
         }
     }
 

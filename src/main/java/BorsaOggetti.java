@@ -2,22 +2,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BorsaOggetti {
-    private List<Oggetti> oggetti;
+    private List<Oggetto> oggetti;
 
     public BorsaOggetti() {
         oggetti = new ArrayList<>();
     }
 
-    public void aggiungiOggetto(Oggetti oggetto) {
+    public void aggiungiOggetto(Oggetto oggetto) {
         oggetti.add(oggetto);
     }
 
-    public void rimuoviOggetto(Oggetti oggetto) {
+    public void rimuoviOggetto(Oggetto oggetto) {
         oggetti.remove(oggetto);
     }
 
     public void stampaContenuto() {
-        for (Oggetti oggetto : oggetti) {
+        for (Oggetto oggetto : oggetti) {
             System.out.println("Oggetto: " + oggetto.getNome() + ", Peso: " + oggetto.getQuantita());
         }
     }

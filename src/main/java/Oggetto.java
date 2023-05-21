@@ -1,4 +1,4 @@
-public class Oggetti {
+public abstract class Oggetto {
         private String nome;
         private int quantita;
 

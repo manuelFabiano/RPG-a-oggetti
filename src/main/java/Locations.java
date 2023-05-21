@@ -1,4 +1,6 @@
-import java.until.Random;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 public class Locations {
     private String nome;
@@ -11,7 +13,7 @@ public class Locations {
     }
 
     // Metodi getter
-    public String getNomelocation() {
+    public String getNome() {
         return nome;
     }
 
@@ -29,7 +31,7 @@ listaLocations.add(new Locations("Lago", "Ti trovi in un lago ricco di pesci."))
     int indiceCasuale = random.nextInt(listaLocations.size());
     Locations locationCasuale = listaLocations.get(indiceCasuale);
 
-System.out.println("Sei a " + locationCasuale.getNomelocation());
+System.out.println("Sei a " + locationCasuale.getNome());
 System.out.println(locationCasuale.getDescrizione());
 
 }

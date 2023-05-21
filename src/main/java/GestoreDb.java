@@ -8,22 +8,20 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 import java.util.Map;
 
 public class GestoreDb {
     private final MongoClient client;
     private final MongoDatabase database;
-    private final MongoCollection<Document> collection;
+    private final MongoCollection<Document> playerscollection;
 
     public GestoreDb(String uri, String databaseName, String collectionName) {
         client = MongoClients.create(uri);
         database = client.getDatabase(databaseName);
-        collection = database.getCollection(collectionName);
+        playerscollection = database.getCollection(collectionName);
         // Crea un'indicizzazione unica sul campo "username"
         IndexOptions indexOptions = new IndexOptions().unique(true);
-        collection.createIndex(new Document("username", 1), indexOptions);
+        playerscollection.createIndex(new Document("username", 1), indexOptions);
         System.out.println("Connessione al database effettuata.");
     }
 
@@ -32,7 +30,7 @@ public class GestoreDb {
                 .append("password", password);
 
         try {
-            collection.insertOne(doc);
+            playerscollection.insertOne(doc);
             System.out.println("Utente inserito nel database.");
             return 1;
         } catch (MongoWriteException e) {
@@ -48,7 +46,7 @@ public class GestoreDb {
 
     public int login(String username, String password, Document utente) {
         try{
-            utente = collection.find(Filters.eq("username", username)).first();
+            utente = playerscollection.find(Filters.eq("username", username)).first();
 
             if (utente != null && utente.getString("password").equals(password)) {
                 System.out.println("Accesso effettuato con successo!");
@@ -82,10 +80,11 @@ public class GestoreDb {
 
         //Aggiorno il database
         Document aggiornamento = new Document("$set", new Document("partita"+(conteggio+1), partita));
-        collection.updateOne(utente, aggiornamento);
+        playerscollection.updateOne(utente, aggiornamento);
 
 
     }
+
 
     public void disconnetti() {
         client.close();

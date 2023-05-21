@@ -73,6 +73,7 @@ public class GestoreClient implements Runnable {
                 switch (clientMessage) {
                     case "1":
                         Gioco gioco = new Gioco(input, output, gestoreDb, utente);
+                        gioco.loop();
                         break;
                     case "2":
                         //continua

@@ -10,10 +10,12 @@ public abstract class Oggetto {
 
         // Metodi getter e setter
         public String getNome() {
+
             return nome;
         }
 
         public int getQuantita() {
+
             return quantita;
         }
 

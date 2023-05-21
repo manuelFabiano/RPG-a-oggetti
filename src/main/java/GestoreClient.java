@@ -98,14 +98,16 @@ public class GestoreClient implements Runnable {
         output.println("Inserisci una password\nPASS");
         String password = input.readLine();
         System.out.println(password);
-        Document utente = new Document();
-        int result = gestoreDb.login(username, password, utente);
-        if(result == 1){
-            MenuGioco();
-        } else if (result == 2) {
-            output.println("Username o password non validi.");
-        } else if (result == -1) {
-            output.println("Si è verificato un errore durante il login");
+        try {
+            this.utente = gestoreDb.login(username, password);
+            if (this.utente != null) {
+                MenuGioco();
+            } else {
+                output.println("Username o password non validi.");
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            output.println("Si è verificato un errore durante l'accesso al database");
         }
     }
 

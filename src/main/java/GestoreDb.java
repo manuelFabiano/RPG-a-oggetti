@@ -44,21 +44,15 @@ public class GestoreDb {
         }
     }
 
-    public int login(String username, String password, Document utente) {
-        try{
-            utente = playerscollection.find(Filters.eq("username", username)).first();
+    public Document login(String username, String password) throws Exception{
+        Document utente = playerscollection.find(Filters.eq("username", username)).first();
 
-            if (utente != null && utente.getString("password").equals(password)) {
-                System.out.println("Accesso effettuato con successo!");
-                return 1;
-            } else {
-                System.out.println("Username o password non validi.");
-                return 2;
-            }
-        } catch (Exception e) {
-            System.err.println("Si è verificato un errore durante il login:");
-            e.printStackTrace();
-            return -1;
+        if (utente != null && utente.getString("password").equals(password)) {
+            System.out.println("Accesso effettuato con successo!");
+            return utente;
+        } else {
+            System.out.println("Username o password non validi.");
+            return null;
         }
     }
 

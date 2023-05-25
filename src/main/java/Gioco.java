@@ -1,3 +1,4 @@
+import Personaggi.Giocatore;
 import org.bson.Document;
 
 import java.io.BufferedReader;

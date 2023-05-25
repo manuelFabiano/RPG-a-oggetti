@@ -1,3 +1,4 @@
+import Personaggi.Giocatore;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoClients;

@@ -1,0 +1,34 @@
+package Personaggi;
+
+import Personaggi.Personaggio;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+public class Giocatore extends Personaggio {
+    private int livello;
+
+    public Giocatore(BufferedReader input, PrintWriter output) throws IOException {
+        this.output = output;
+        this.input = input;
+        puntiVita = 20;
+        livello = 1;
+        this.output.println("Hai 10 punti a disposizione da assegnare alle tue abilità!\n"+
+                "-Attacco\n-Difesa\n-Agilità\n"+
+                "Quanti punti di Attacco vuoi assegnare?\nPASS");
+        puntiAttacco = Integer.parseInt(this.input.readLine());
+        int puntiRimanenti = 10 - puntiAttacco;
+        this.output.println("Ti rimangono"+ puntiRimanenti +"da assegnare alle tue abilità!\n"+
+                "-Difesa\n-Agilità\n"+
+                "Quanti punti di Difesa vuoi assegnare?\nPASS");
+        puntiDifesa = Integer.parseInt(this.input.readLine());
+        puntiRimanenti -= puntiDifesa;
+        this.output.println("Bene! Ti rimangono " + puntiRimanenti + " punti che verranno assegnati ai punti di Agilità!\nPASS");
+        puntiAgilità = puntiRimanenti;
+
+    }
+
+
+
+}

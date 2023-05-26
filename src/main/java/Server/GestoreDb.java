@@ -59,7 +59,7 @@ public class GestoreDb {
         }
     }
 
-    public void nuovaPartita(Document utente, Giocatore giocatore){
+    public String nuovaPartita(Document utente, Giocatore giocatore){
         //Verifico se esistono già partite create dall'utente
         int conteggio = 0;
         for (Map.Entry<String, Object> entry : utente.entrySet()) {
@@ -80,9 +80,43 @@ public class GestoreDb {
         //Aggiorno il database
         Document aggiornamento = new Document("$set", new Document("partita"+(conteggio+1), partita));
         playerscollection.updateOne(utente, aggiornamento);
-
-
+        return "partita"+(conteggio+1);
     }
+
+    public void salvaPartita(Document utente, Giocatore giocatore, Gioco gioco){
+        //Preparo il document da inserire
+        Document partita = new Document("roundCorrente", gioco.getRoundCorrente())
+                .append("puntiVita", giocatore.getPuntiVita())
+                .append("puntiAttacco", giocatore.getPuntiAttacco())
+                .append("puntiDifesa", giocatore.getPuntiDifesa())
+                .append("puntiAgilità", giocatore.getPuntiAgilità())
+                .append("livello", giocatore.getLivello())
+                .append("esperienza", giocatore.getEsperienza());
+
+        //Aggiorno il database
+        Document aggiornamento = new Document("$set", new Document(gioco.getChiavePartita(), partita));
+        playerscollection.updateOne(utente, aggiornamento);
+    }
+
+    public String stampaPartite(Document utente){
+        StringBuilder result = new StringBuilder();
+        for (Map.Entry<String, Object> entry : utente.entrySet()) {
+            String chiave = entry.getKey();
+            if (chiave.contains("partita")) {
+                Document partita = utente.get(chiave, Document.class);
+                result.append(chiave + ": round " + partita.getInteger("roundCorrente") + " - livello " + partita.getInteger("livello") + "\n" );
+            }
+        }
+        return result.toString();
+    }
+
+    public Document trovaPartita(Document utente, String chiave) {
+        if (utente.containsKey(chiave)) {
+            return utente.get(chiave, Document.class);
+        }
+        return null;
+    }
+
 
 
     public void disconnetti() {

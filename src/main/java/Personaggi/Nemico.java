@@ -5,7 +5,7 @@ import java.util.Random;
 public abstract class Nemico extends Personaggio{
     private String nome;
     private String tipo;
-    private String dropEsperienza;
+    private int dropEsperienza;
     protected Random random;
 
     protected int generaPuntiVita(int livelloGiocatore, int hpMin, int hpMax) {
@@ -34,6 +34,10 @@ public abstract class Nemico extends Personaggio{
         int puntiAgilitàRandom = random.nextInt(5) - 2; //genera un numero casuale da -2 a 2
         return puntiAgilitàGiocatore + puntiAgilitàRandom;
     }
+    protected int generaDropEsperienza(){
+        int dropBase = 500;
+        return dropBase + (random.nextInt(501));
+    }
 
     public void setNome() {
         this.nome = Nomi.getNomeRandom();
@@ -43,10 +47,13 @@ public abstract class Nemico extends Personaggio{
         return nome;
     }
 
-    public String getDropEsperienza() {
+    public int getDropEsperienza() {
         return dropEsperienza;
     }
 
+    public void setDropEsperienza(int dropEsperienza) {
+        this.dropEsperienza = dropEsperienza;
+    }
 
     public String getTipo() {
         return tipo;

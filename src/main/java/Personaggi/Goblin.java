@@ -1,6 +1,5 @@
 package Personaggi;
 
-import java.io.PrintWriter;
 
 public class Goblin extends Inumano{
 
@@ -9,11 +8,11 @@ public class Goblin extends Inumano{
     public Goblin(Giocatore giocatore) {
         setTipo("Goblin");
         setNome();
-        setPuntiVita(generaPuntiVita(giocatore.getLivello(), 6, 20));
+        setPuntiVita(generaPuntiVita(giocatore.getLivello(), 6, 18));
         setPuntiAttacco(generaPuntiAttacco(giocatore.getPuntiAttacco()));
         setPuntiDifesa(generaPuntiDifesa(giocatore.getPuntiDifesa()));
         setPuntiAttacco(generaPuntiAgilità(giocatore.getPuntiAgilità()));
-
+        setDropEsperienza(generaDropEsperienza());
 
     }
 
@@ -34,5 +33,6 @@ public class Goblin extends Inumano{
         puntiAgilitàGiocatore += random.nextInt(5); //I goblin sono più agili
         return super.generaPuntiAgilità(puntiAgilitàGiocatore);
     }
+
 
 }

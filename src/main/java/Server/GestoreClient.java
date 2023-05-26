@@ -77,17 +77,30 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
     private void MenuGioco() throws IOException{
         boolean exit = false;
         String clientMessage;
+        Gioco gioco;
         while(!exit) {
             stampaMenuGioco();
             if((clientMessage = ricevi()) != null) {
                 System.out.println("Messaggio dal client: " + clientMessage);
                 switch (clientMessage) {
                     case "1":
-                        Gioco gioco = new Gioco(this, gestoreDb, utente);
+                        gioco = new Gioco(this, gestoreDb, utente);
                         gioco.loop();
                         break;
                     case "2":
-                        //continua
+                        Document partita;
+                        String chiavePartita;
+                        do {
+                            manda("Queste sono i tuoi salvataggi:");
+                            manda(gestoreDb.stampaPartite(utente));
+                            manda("Seleziona una partita da continuare:\nPASS");
+                            chiavePartita = ricevi();
+                            partita = gestoreDb.trovaPartita(utente, chiavePartita);
+                            if (partita == null)
+                                manda("La partita che hai inserito non è valida");
+                        } while (partita == null);
+                        gioco = new Gioco(this, gestoreDb, utente, partita, chiavePartita);
+                        gioco.loop();
                         break;
                     case "3":
                         //classifica

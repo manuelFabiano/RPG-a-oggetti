@@ -1,7 +1,5 @@
 package Personaggi;
 
-import java.io.PrintWriter;
-
 public class Orco extends Inumano {
 
     /* Gli orchi saranno più forti in attacco e difesa rispetto agli altri, ma
@@ -13,6 +11,7 @@ public class Orco extends Inumano {
         setPuntiAttacco(generaPuntiAttacco(giocatore.getPuntiAttacco()));
         setPuntiDifesa(generaPuntiDifesa(giocatore.getPuntiDifesa()));
         setPuntiAgilità(generaPuntiAgilità(giocatore.getPuntiAgilità()));
+        setDropEsperienza(generaDropEsperienza());
     }
 
     @Override

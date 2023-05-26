@@ -6,10 +6,10 @@ import java.io.PrintWriter;
 
 public abstract class Personaggio {
     private InterfacciaGestoreClient gestoreClient;
-    private int puntiVita;
-    private int puntiAttacco;
-    private int puntiDifesa;
-    private int puntiAgilità;
+    private int puntiVita = 0;
+    private int puntiAttacco = 0;
+    private int puntiDifesa = 0;
+    private int puntiAgilità = 0;
 
 
     public void subisciDanni(int danni){

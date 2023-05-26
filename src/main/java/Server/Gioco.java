@@ -13,6 +13,8 @@ public class Gioco {
     private int roundCorrente;
     private Giocatore giocatore;
     private Random random;
+    private final String chiavePartita;
+    Document utente;
 
     //costruttore usato se si sta avviando una nuova partita
     public Gioco(InterfacciaGestoreClient gestoreClient, GestoreDb gestoreDb, Document utente) throws IOException {
@@ -21,14 +23,27 @@ public class Gioco {
         this.roundCorrente = 1;
         random = new Random();
         this.giocatore = new Giocatore(gestoreClient);
-        gestoreDb.nuovaPartita(utente, giocatore);
+        this.utente = utente;
+        chiavePartita = gestoreDb.nuovaPartita(utente, giocatore);
+    }
+
+
+    public Gioco(InterfacciaGestoreClient gestoreClient, GestoreDb gestoreDb, Document utente, Document partita, String chiavePartita) throws IOException {
+        this.gestoreClient = gestoreClient;
+        this.gestoreDb = gestoreDb;
+        this.roundCorrente = partita.getInteger("roundCorrente");
+        random = new Random();
+        this.giocatore = new Giocatore(gestoreClient, partita);
+        this.utente = utente;
+        this.chiavePartita = chiavePartita;
     }
 
     //inizia un loop per gestire ogni round del gioco
     public void loop()throws IOException{
         int tipoIncontro;
+        boolean gameOver = false;
         Random random = new Random();
-        while (roundCorrente < ROUNDS){
+        while (roundCorrente < ROUNDS && !gameOver){
             //Se è il primo round stampo la storia iniziale
             if (roundCorrente == 1){
                 stampaStoriaIniziale();
@@ -41,15 +56,17 @@ public class Gioco {
             if(tipoIncontro == 0) {
                 nemicoCasuale();
             }
-
+            if(!giocatore.isVivo())
+                gameOver = true;
         }
     }
 
     //Metodo che gestisce i combattimenti
-    public void Combattimento(Nemico nemico) throws IOException{
+    private void Combattimento(Nemico nemico) throws IOException{
         String clientMessage;
         int danniGiocatore;
         int danniNemico;
+        int dropEsperienza;
         gestoreClient.manda("Inizia il combattimento con " + nemico.getNome() + "(" + nemico.getTipo() + ")");
         while (giocatore.isVivo() && nemico.isVivo()) {
             gestoreClient.manda("HP del nemico: "+ nemico.getPuntiVita());
@@ -66,11 +83,7 @@ public class Gioco {
                             nemico.subisciDanni(danniGiocatore);
                             gestoreClient.manda("Hai attaccato il nemico e gli hai inflitto " + danniGiocatore + " danni!");
                             //Sleep di 1 secondo.
-                            try {
-                                Thread.sleep(1000); // Ritardo di 1 secondo
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
+                            sleep();
                             if(!nemico.isVivo()) break;
                             //Adesso attacca il nemico
                             danniNemico = calcolaDanni(nemico.getPuntiAttacco(), giocatore.getPuntiDifesa());
@@ -83,11 +96,7 @@ public class Gioco {
                             giocatore.subisciDanni(danniNemico);
                             gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
                             //Sleep di 1 secondo.
-                            try {
-                                Thread.sleep(1000); // Ritardo di 1 secondo
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
+                            sleep();
                             danniGiocatore = calcolaDanni(giocatore.getPuntiAttacco(), nemico.getPuntiDifesa());
                             nemico.subisciDanni(danniGiocatore);
                             gestoreClient.manda("Hai attaccato il nemico e gli hai inflitto " + danniGiocatore + " danni!");
@@ -124,12 +133,24 @@ public class Gioco {
         if (giocatore.isVivo()) {
             gestoreClient.manda("Complimenti! Hai vinto il combattimento!");
             roundCorrente += 1;
+            dropEsperienza = nemico.getDropEsperienza();
+            gestoreClient.manda("Hai ottenuto " + dropEsperienza + " punti esperienza!");
+            sleep();
+            giocatore.aumentaEsperienza(dropEsperienza);
+            gestoreDb.salvaPartita(utente, giocatore, this);
         } else {
             gestoreClient.manda("Sei morto, GAME OVER!");
         }
     }
 
 
+    private void sleep(){
+        try {
+            Thread.sleep(1000); // Ritardo di 1 secondo
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
 
     private boolean calcolaSchivata(int puntiAgilità) {
         Random random = new Random();
@@ -176,6 +197,7 @@ public class Gioco {
 
     }
 
+
     private void premiPerContinuare(){
             gestoreClient.manda("Premi invio per coninuare\nPASS");
         try {
@@ -190,5 +212,13 @@ public class Gioco {
                 "La luce danza attraverso gli alberi, mentre il vento sussurra segreti antichi.\n" +
                 "Sola e sperduta, la tua anima si nutre di un'insaziabile sete di verità\n" +
                 "Ogni passo rivela una nuova sfida e ogni incontro svela un pezzo del puzzle perduto...\n");
+    }
+
+    public int getRoundCorrente() {
+        return roundCorrente;
+    }
+
+    public String getChiavePartita() {
+        return chiavePartita;
     }
 }

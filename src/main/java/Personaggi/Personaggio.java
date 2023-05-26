@@ -1,34 +1,34 @@
 package Personaggi;
 
+import Server.InterfacciaGestoreClient;
 import java.io.BufferedReader;
 import java.io.PrintWriter;
 
 public abstract class Personaggio {
-    protected BufferedReader input;
-    protected PrintWriter output;
-    protected int puntiVita;
-    protected int puntiAttacco;
-    protected int puntiDifesa;
-    protected int puntiAgilità;
+    private InterfacciaGestoreClient gestoreClient;
+    private int puntiVita;
+    private int puntiAttacco;
+    private int puntiDifesa;
+    private int puntiAgilità;
 
-    public BufferedReader getInput() {
-        return input;
+
+    public void subisciDanni(int danni){
+        puntiVita -= danni;
     }
-
-    public PrintWriter getOutput() {
-        return output;
+    public boolean isVivo(){
+        return puntiVita > 0;
     }
 
     public int getPuntiAgilità() {
         return puntiAgilità;
     }
 
-    public void setInput(BufferedReader input) {
-        this.input = input;
+    public InterfacciaGestoreClient getGestoreClient() {
+        return gestoreClient;
     }
 
-    public void setOutput(PrintWriter output) {
-        this.output = output;
+    public void setGestoreClient(InterfacciaGestoreClient gestoreClient) {
+        this.gestoreClient = gestoreClient;
     }
 
     public void setPuntiAgilità(int puntiAgilità) {

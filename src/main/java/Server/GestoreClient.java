@@ -1,4 +1,5 @@
-import java.awt.*;
+package Server;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -6,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import org.bson.Document;
 
-public class GestoreClient implements Runnable {
+public class GestoreClient implements Runnable, InterfacciaGestoreClient {
     private final Socket clientSocket;
     private final GestoreDb gestoreDb;
     private BufferedReader input;
@@ -32,19 +33,20 @@ public class GestoreClient implements Runnable {
             while(!exit) {
                 stampaMenuLogin();
                 // Logica di gestione della comunicazione con il client
-                if((clientMessage = input.readLine()) != null){
+                if((clientMessage = ricevi()) != null){
                     System.out.println("Messaggio dal client: " + clientMessage);
                     switch (clientMessage) {
                         case "1":{
                             gestioneLogin();
+                            exit = true;
                             break; }
                         case "2": {
                             gestioneRegister();
+                            exit = true;
                             break;
                         }
                         case "3":{
                             exit = true;
-                            System.out.println(exit);
                             break;
                         }
                         default:
@@ -56,9 +58,18 @@ public class GestoreClient implements Runnable {
             input.close();
             output.close();
             clientSocket.close();
-            System.out.println("Risorse chiuse");
         } catch (IOException e) {
             e.printStackTrace();
+        }finally {
+            try {
+                // Chiudi le risorse
+                input.close();
+                output.close();
+                clientSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Connessione conclusa");
         }
     }
 
@@ -68,11 +79,11 @@ public class GestoreClient implements Runnable {
         String clientMessage;
         while(!exit) {
             stampaMenuGioco();
-            if((clientMessage = input.readLine()) != null) {
+            if((clientMessage = ricevi()) != null) {
                 System.out.println("Messaggio dal client: " + clientMessage);
                 switch (clientMessage) {
                     case "1":
-                        Gioco gioco = new Gioco(input, output, gestoreDb, utente);
+                        Gioco gioco = new Gioco(this, gestoreDb, utente);
                         gioco.loop();
                         break;
                     case "2":
@@ -92,42 +103,41 @@ public class GestoreClient implements Runnable {
     }
 
     private void gestioneLogin() throws IOException{
-        output.println("Inserisci l'username:\nPASS");
-        String username = input.readLine();
+        manda("Inserisci l'username:\nPASS");
+        String username = ricevi();
         System.out.println(username);
-        output.println("Inserisci una password\nPASS");
-        String password = input.readLine();
+        manda("Inserisci una password\nPASS");
+        String password = ricevi();
         System.out.println(password);
         try {
             this.utente = gestoreDb.login(username, password);
             if (this.utente != null) {
                 MenuGioco();
             } else {
-                output.println("Username o password non validi.");
+                manda("Username o password non validi.");
             }
         }catch (Exception e){
             e.printStackTrace();
-            output.println("Si è verificato un errore durante l'accesso al database");
+            manda("Si è verificato un errore durante l'accesso al database");
         }
     }
 
     private void gestioneRegister() throws IOException{
-        output.println("Inserisci l'username:\nPASS");
-        String username = input.readLine();
+        manda("Inserisci l'username:\nPASS");
+        String username = ricevi();
         System.out.println(username);
-        output.println("Inserisci una password\nPASS");
-        String password = input.readLine();
+        manda("Inserisci una password\nPASS");
+        String password = ricevi();
         System.out.println(password);
 
         int res = gestoreDb.registraUtente(username, password);
         if (res == 1){
-            //stampamenuprincipale
-            System.out.println("menu");
+            gestioneLogin();
         }
     }
 
-    private void stampaMenuLogin() throws IOException{
-        output.println("Benvenuto a RPG a OGGETTI!\n" +
+    private void stampaMenuLogin(){
+        manda("Benvenuto a RPG a OGGETTI!\n" +
                 "Scegli un'opzione:\n" +
                 "1. Accedi\n" +
                 "2. Registrati\n" +
@@ -136,12 +146,20 @@ public class GestoreClient implements Runnable {
     }
 
     private void stampaMenuGioco(){
-        output.println("Cosa vuoi fare?\n" +
+        manda("Cosa vuoi fare?\n" +
                 "Scegli un'opzione:\n" +
                 "1. Nuova partita\n" +
                 "2. Continua\n" +
                 "3. Classifica\n" +
                 "4. Esci\n" +
                 "PASS");
+    }
+    @Override
+    public void manda(String string){
+        output.println(string);
+    }
+    @Override
+    public String ricevi()throws IOException{
+        return input.readLine();
     }
 }

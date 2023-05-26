@@ -1,3 +1,5 @@
+package Server;
+
 import Personaggi.Giocatore;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
@@ -71,7 +73,9 @@ public class GestoreDb {
                 .append("puntiVita", giocatore.getPuntiVita())
                 .append("puntiAttacco", giocatore.getPuntiAttacco())
                 .append("puntiDifesa", giocatore.getPuntiDifesa())
-                .append("livello", giocatore.getLivello());
+                .append("puntiAgilità", giocatore.getPuntiAgilità())
+                .append("livello", giocatore.getLivello())
+                .append("esperienza", giocatore.getEsperienza());
 
         //Aggiorno il database
         Document aggiornamento = new Document("$set", new Document("partita"+(conteggio+1), partita));

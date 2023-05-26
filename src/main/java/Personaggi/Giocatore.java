@@ -1,53 +1,63 @@
 package Personaggi;
 
+
+import Server.InterfacciaGestoreClient;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 public class Giocatore extends Personaggio {
-    private int livello;
+    private final int livello;
+    private final int esperienza;
 
-    public Giocatore(BufferedReader input, PrintWriter output) throws IOException {
-        this.output = output;
-        this.input = input;
-        puntiVita = 20;
+
+    //Costruttore personaggio del giocatore quando si inizia una nuova partita
+    public Giocatore(InterfacciaGestoreClient gestoreClient) throws IOException {
+        setGestoreClient(gestoreClient);
+        setPuntiVita(20);
         livello = 1;
+        esperienza = 0;
         while (true) {
-            this.output.println("Hai 10 punti a disposizione da assegnare alle tue abilità!\n"
+            getGestoreClient().manda("Hai 15 punti a disposizione da assegnare alle tue abilità!\n"
                     + "- Attacco\n- Difesa\n- Agilità\n"
                     + "Quanti punti di Attacco vuoi assegnare?\nPASS");
 
-            puntiAttacco = Integer.parseInt(this.input.readLine());
+            setPuntiAttacco(Integer.parseInt(getGestoreClient().ricevi()));
 
-            if (puntiAttacco < 1 || puntiAttacco > 9) {
-                this.output.println("Puoi assegnare da 1 a 8 punti ad Attacco.");
+            if (getPuntiAttacco() < 1 || getPuntiAttacco() > 14) {
+                getGestoreClient().manda("Puoi assegnare da 1 a 13 punti ad Attacco.");
                 continue;
             }
-            int puntiRimanenti = 10 - puntiAttacco;
-            this.output.println("Bene! Ti rimangono " + puntiRimanenti + " punti da assegnare alle tue abilità!\n"
+            int puntiRimanenti = 15 - getPuntiAttacco();
+            getGestoreClient().manda("Bene! Ti rimangono " + puntiRimanenti + " punti da assegnare alle tue abilità!\n"
                     + "- Difesa\n- Agilità\n"
                     + "Quanti punti di Difesa vuoi assegnare?\nPASS");
 
-            puntiDifesa = Integer.parseInt(this.input.readLine());
+            setPuntiDifesa(Integer.parseInt(getGestoreClient().ricevi()));
 
-            if (puntiDifesa < 1 || puntiDifesa > (puntiRimanenti-1)) {
-                this.output.println("Puoi assegnare da 1 a " + (puntiRimanenti-1) +" punti alla Difesa.");
+            if (getPuntiDifesa() < 1 || getPuntiDifesa() > (puntiRimanenti-1)) {
+                getGestoreClient().manda("Puoi assegnare da 1 a " + (puntiRimanenti-1) +" punti alla Difesa.");
                 continue;
             }
 
-            puntiRimanenti -= puntiDifesa;
-            this.output.println("Bene! Ti rimangono " + puntiRimanenti + " punti che verranno assegnati all' Agilità!");
-            puntiAgilità = puntiRimanenti;
+            puntiRimanenti -= getPuntiDifesa();
+            getGestoreClient().manda("Bene! Ti rimangono " + puntiRimanenti + " punti che verranno assegnati all' Agilità!");
+            setPuntiAgilità(puntiRimanenti);
             break;
         }
 
-        this.output.println("Hai assegnato i punti correttamente:\n"
-                + "Attacco: " + puntiAttacco + "\n"
-                + "Difesa: " + puntiDifesa + "\n"
-                + "Agilità: " + puntiAgilità);
+        getGestoreClient().manda("Hai assegnato i punti correttamente:\n"
+                + "Attacco: " + getPuntiAttacco() + "\n"
+                + "Difesa: " + getPuntiDifesa() + "\n"
+                + "Agilità: " + getPuntiAgilità());
     }
 
     public int getLivello() {
         return livello;
+    }
+
+    public int getEsperienza() {
+        return esperienza;
     }
 }

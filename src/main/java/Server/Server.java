@@ -1,3 +1,5 @@
+package Server;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -9,7 +11,7 @@ public class Server {
             GestoreDb gestoreDb = new GestoreDb("mongodb://localhost:27017", "RPG", "Players");
 
             ServerSocket serverSocket = new ServerSocket(PORT);
-            System.out.println("Server avviato. In attesa di connessioni...");
+            System.out.println("Server.Server avviato. In attesa di connessioni...");
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();

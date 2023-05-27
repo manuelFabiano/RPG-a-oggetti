@@ -1,5 +1,7 @@
 package Server;
 
+import Locations.Bosco;
+import Locations.Locations;
 import Personaggi.*;
 import org.bson.Document;
 
@@ -55,6 +57,10 @@ public class Gioco {
             //INCONTRO CON UN NEMICO
             if(tipoIncontro == 0) {
                 nemicoCasuale();
+            }
+            else(tipoIncontro != 0) {
+                luogocasuale();
+            }
             }
             if(!giocatore.isVivo())
                 gameOver = true;
@@ -197,6 +203,19 @@ public class Gioco {
 
     }
 
+    private void luogocasuale()throws IOException{
+        int luogo = random.nextInt(11);
+        if (luogo > 7) {
+            Bosco Bosco = new Bosco(Locations);
+            esplorazione(Bosco);
+        }else{
+            Lago Lago = new Lago(Locations);
+
+        }
+
+
+    }
+
 
     private void premiPerContinuare(){
             gestoreClient.manda("Premi invio per coninuare\nPASS");
@@ -206,6 +225,8 @@ public class Gioco {
             e.printStackTrace();
         }
     }
+
+
 
     private void stampaStoriaIniziale(){
             gestoreClient.manda("Nel cuore di un bosco avvolto dall'ombra, ti risvegli senza alcuna memoria.\n" +

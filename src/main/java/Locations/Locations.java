@@ -1,8 +1,13 @@
+package Locations;
+
+import Server.InterfacciaGestoreClient;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class Locations {
+public abstract class Locations {
+    private InterfacciaGestoreClient gestoreClient;
     private String nome;
     private String descrizione;
 
@@ -21,4 +26,11 @@ public class Locations {
         return descrizione;
     }
 
+    public InterfacciaGestoreClient getGestoreClient() {
+        return gestoreClient;
+    }
+
+
 }
+
+

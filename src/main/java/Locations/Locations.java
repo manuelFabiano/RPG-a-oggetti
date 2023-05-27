@@ -2,26 +2,11 @@ package Locations;
 
 import Server.InterfacciaGestoreClient;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.io.IOException;
 
 public abstract class Locations {
     private InterfacciaGestoreClient gestoreClient;
-    private String nome;
     private String descrizione;
-
-    // Costruttore
-    public Locations(String nome, String descrizione) {
-        this.nome = nome;
-        this.descrizione = descrizione;
-    }
-
-    // Metodi getter
-    public String getNome() {
-        return nome;
-    }
-
     public String getDescrizione() {
         return descrizione;
     }
@@ -30,7 +15,15 @@ public abstract class Locations {
         return gestoreClient;
     }
 
+    public void setGestoreClient(InterfacciaGestoreClient gestoreClient) {
+        this.gestoreClient = gestoreClient;
+    }
 
+    public void setDescrizione(String descrizione) {
+        this.descrizione = descrizione;
+    }
+
+    public abstract void esplora() throws IOException;
 }
 
 

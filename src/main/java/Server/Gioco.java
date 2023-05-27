@@ -1,10 +1,8 @@
 package Server;
 
-import Locations.Bosco;
-import Locations.Locations;
+import Locations.*;
 import Personaggi.*;
 import org.bson.Document;
-
 import java.io.IOException;
 import java.util.Random;
 
@@ -29,7 +27,7 @@ public class Gioco {
         chiavePartita = gestoreDb.nuovaPartita(utente, giocatore);
     }
 
-
+    //Continua la partita
     public Gioco(InterfacciaGestoreClient gestoreClient, GestoreDb gestoreDb, Document utente, Document partita, String chiavePartita) throws IOException {
         this.gestoreClient = gestoreClient;
         this.gestoreDb = gestoreDb;
@@ -52,15 +50,14 @@ public class Gioco {
                 premiPerContinuare();
             }
             //logica di gioco:
-
-            tipoIncontro = 0;
+            //tipoIncontro = random.nextInt(2);
+            tipoIncontro = 1;
             //INCONTRO CON UN NEMICO
             if(tipoIncontro == 0) {
                 nemicoCasuale();
             }
-            else(tipoIncontro != 0) {
-                luogocasuale();
-            }
+            else if(tipoIncontro == 1) {
+                luogoCasuale();
             }
             if(!giocatore.isVivo())
                 gameOver = true;
@@ -103,6 +100,7 @@ public class Gioco {
                             gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
                             //Sleep di 1 secondo.
                             sleep();
+                            if(!giocatore.isVivo()) break;
                             danniGiocatore = calcolaDanni(giocatore.getPuntiAttacco(), nemico.getPuntiDifesa());
                             nemico.subisciDanni(danniGiocatore);
                             gestoreClient.manda("Hai attaccato il nemico e gli hai inflitto " + danniGiocatore + " danni!");
@@ -203,14 +201,16 @@ public class Gioco {
 
     }
 
-    private void luogocasuale()throws IOException{
-        int luogo = random.nextInt(11);
-        if (luogo > 7) {
-            Bosco Bosco = new Bosco(Locations);
-            esplorazione(Bosco);
+    private void luogoCasuale()throws IOException{
+        int luogo = random.nextInt(2);
+        if (luogo == 0) {
+            Bosco bosco = new Bosco(gestoreClient);
+            bosco.esplora();
+            premiPerContinuare();
         }else{
-            Lago Lago = new Lago(Locations);
-
+            Lago lago = new Lago(gestoreClient);
+            lago.esplora();
+            premiPerContinuare();
         }
 
 

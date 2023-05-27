@@ -20,6 +20,7 @@ public class Giocatore extends Personaggio {
         assegnaPunti(15);
     }
 
+    //Continua partita
     public Giocatore(InterfacciaGestoreClient gestoreClient, Document partita){
         setGestoreClient(gestoreClient);
         setPuntiVita(partita.getInteger("puntiVita"));

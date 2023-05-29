@@ -1,6 +1,7 @@
 package Personaggi;
 
 
+import Oggetti.Arma;
 import Server.InterfacciaGestoreClient;
 import org.bson.Document;
 
@@ -9,7 +10,7 @@ import java.io.IOException;
 public class Giocatore extends Personaggio {
     private int livello;
     private int esperienza;
-
+    private Arma arma;
 
     //Costruttore personaggio del giocatore quando si inizia una nuova partita
     public Giocatore(InterfacciaGestoreClient gestoreClient) throws IOException {
@@ -17,6 +18,7 @@ public class Giocatore extends Personaggio {
         setPuntiVita(20);
         livello = 1;
         esperienza = 0;
+        arma = new Arma("Spada di Legno","Una normale spada di legno", 2,"Nessuna");
         assegnaPunti(15);
     }
 
@@ -112,4 +114,42 @@ public class Giocatore extends Personaggio {
                 + "Agilità: " + getPuntiAgilità());
     }
 
+    public void nuovaArma(Arma arma) throws IOException{
+        while (true){
+            getGestoreClient().manda("Hai trovato una nuova arma:");
+            getGestoreClient().manda(arma.getArma());
+            getGestoreClient().manda("\nQuesta è la tua attuale arma:");
+            getGestoreClient().manda(this.arma.getArma());
+            getGestoreClient().manda("\nVuoi equipaggiare l'arma che hai appena trovato?\n" +
+                    "1. Si\n" +
+                    "2. No\nPASS");
+            String risposta = getGestoreClient().ricevi();
+            if(risposta.equals("1")){
+                setArma(arma);
+                getGestoreClient().manda("Hai equipaggiato la nuova arma!");
+                break;
+            }else if(risposta.equals("2")){
+                getGestoreClient().manda("Hai lasciato a terra la nuova arma...");
+                break;
+            }else{
+                getGestoreClient().manda("Opzione non valida!");
+            }
+        }
+    }
+
+    public void setLivello(int livello) {
+        this.livello = livello;
+    }
+
+    public void setEsperienza(int esperienza) {
+        this.esperienza = esperienza;
+    }
+
+    public Arma getArma() {
+        return arma;
+    }
+
+    public void setArma(Arma arma) {
+        this.arma = arma;
+    }
 }

@@ -50,13 +50,12 @@ public class Gioco {
                 premiPerContinuare();
             }
             //logica di gioco:
-            //tipoIncontro = random.nextInt(2);
-            tipoIncontro = 1;
+            tipoIncontro = random.nextInt(2);
             //INCONTRO CON UN NEMICO
             if(tipoIncontro == 0) {
                 nemicoCasuale();
             }
-            else if(tipoIncontro == 1) {
+            else if (tipoIncontro == 1) {
                 luogoCasuale();
             }
             if(!giocatore.isVivo())
@@ -65,7 +64,7 @@ public class Gioco {
     }
 
     //Metodo che gestisce i combattimenti
-    public void Combattimento(Nemico nemico) throws IOException{
+    private void Combattimento(Nemico nemico) throws IOException{
         String clientMessage;
         int danniGiocatore;
         int danniNemico;
@@ -243,5 +242,11 @@ public class Gioco {
         return chiavePartita;
     }
 
-    public Giocatore getGiocatore() {return giocatore;}
+    public Giocatore getGiocatore() {
+        return giocatore;
+    }
+
+    public void setGiocatore(Giocatore giocatore) {
+        this.giocatore = giocatore;
+    }
 }

@@ -54,10 +54,6 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
                     }
                 }
             }
-            // Chiudi le risorse
-            input.close();
-            output.close();
-            clientSocket.close();
         } catch (IOException e) {
             e.printStackTrace();
         }finally {

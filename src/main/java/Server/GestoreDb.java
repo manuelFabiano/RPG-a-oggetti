@@ -75,8 +75,11 @@ public class GestoreDb {
                 .append("puntiDifesa", giocatore.getPuntiDifesa())
                 .append("puntiAgilità", giocatore.getPuntiAgilità())
                 .append("livello", giocatore.getLivello())
-                .append("esperienza", giocatore.getEsperienza());
-
+                .append("esperienza", giocatore.getEsperienza())
+                .append("arma", new Document("nome",giocatore.getArma().getNome())
+                        .append("descrizione", giocatore.getArma().getDescrizione())
+                        .append("danniBase", giocatore.getArma().getDanniBase())
+                        .append("abilita", giocatore.getArma().getAbilita()));
         //Aggiorno il database
         Document aggiornamento = new Document("$set", new Document("partita"+(conteggio+1), partita));
         playerscollection.updateOne(utente, aggiornamento);
@@ -91,7 +94,11 @@ public class GestoreDb {
                 .append("puntiDifesa", giocatore.getPuntiDifesa())
                 .append("puntiAgilità", giocatore.getPuntiAgilità())
                 .append("livello", giocatore.getLivello())
-                .append("esperienza", giocatore.getEsperienza());
+                .append("esperienza", giocatore.getEsperienza())
+                .append("arma", new Document("nome",giocatore.getArma().getNome())
+                    .append("descrizione", giocatore.getArma().getDescrizione())
+                    .append("danniBase", giocatore.getArma().getDanniBase())
+                    .append("abilita", giocatore.getArma().getAbilita()));
 
         //Aggiorno il database
         Document aggiornamento = new Document("$set", new Document(gioco.getChiavePartita(), partita));

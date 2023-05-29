@@ -1,7 +1,5 @@
 package Locations;
 
-import Personaggi.Giocatore;
-import Personaggi.Orco;
 import Server.Gioco;
 import Server.InterfacciaGestoreClient;
 
@@ -35,8 +33,7 @@ public class Bosco extends Locations {
                     String avvicinamento = getGestoreClient().ricevi();
                     if (avvicinamento.equals("1")) {
                         getGestoreClient().manda("Trovi dei cadaveri ridotti a poltiglia e vieni attaccato da un orco!");
-                        Orco orco = new Orco(gioco.getGiocatore());
-                        gioco.Combattimento(orco);
+                        // Inserire orco
                         break;
                     } else if (avvicinamento.equals("2")) {
                         getGestoreClient().manda("Prosegui verso una luce trovando l'uscita del bosco!");

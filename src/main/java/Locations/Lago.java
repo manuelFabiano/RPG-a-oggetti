@@ -1,10 +1,11 @@
 package Locations;
 
-import Personaggi.Goblin;
+import Oggetti.Arma;
 import Server.Gioco;
 import Server.InterfacciaGestoreClient;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class Lago extends Locations {
 
@@ -32,13 +33,13 @@ public class Lago extends Locations {
 
                     String avvicinamento = getGestoreClient().ricevi();
                     if (avvicinamento.equals("1")) {
-                        getGestoreClient().manda("Entri nella casa del pescatore e trovi una spada!");
-                        // Inserire la logica per assegnare la spada al giocatore
+                        getGestoreClient().manda("Entri nella casa del pescatore e trovi un'ascia!");
+                        Arma ascia = creaArma();
+                        gioco.getGiocatore().nuovaArma(ascia);
                         break;
                     } else if (avvicinamento.equals("2")) {
                         getGestoreClient().manda("Mentre ti avvicini alla riva del lago, incontri un goblin!");
-                        Goblin goblin = new Goblin(gioco.getGiocatore());
-                        gioco.Combattimento(goblin);
+                        // Inserire la logica per avviare un combattimento con il goblin
                         break;
                     } else {
                         getGestoreClient().manda("Scelta non valida. Riprova.");
@@ -52,5 +53,12 @@ public class Lago extends Locations {
                 getGestoreClient().manda("Scelta non valida. Riprova.");
             }
         }
+    }
+
+    private Arma creaArma(){
+        String descrizioneArma = "Un'ascia affilata, forgiata con maestria e incisa con simboli runici.";
+        Random random = new Random();
+        int danniBase = 5 + random.nextInt(11);
+        return new Arma("Ascia affilata", descrizioneArma , danniBase, "Nessuna");
     }
 }

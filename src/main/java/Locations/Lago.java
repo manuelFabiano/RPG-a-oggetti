@@ -1,5 +1,7 @@
 package Locations;
 
+import Personaggi.Goblin;
+import Server.Gioco;
 import Server.InterfacciaGestoreClient;
 
 import java.io.IOException;
@@ -15,7 +17,7 @@ public class Lago extends Locations {
     }
 
     @Override
-    public void esplora() throws IOException {
+    public void esplora(Gioco gioco) throws IOException {
         while (true) {
             getGestoreClient().manda(getDescrizione());
             getGestoreClient().manda("1. Esplora il lago");
@@ -35,7 +37,8 @@ public class Lago extends Locations {
                         break;
                     } else if (avvicinamento.equals("2")) {
                         getGestoreClient().manda("Mentre ti avvicini alla riva del lago, incontri un goblin!");
-                        // Inserire la logica per avviare un combattimento con il goblin
+                        Goblin goblin = new Goblin(gioco.getGiocatore());
+                        gioco.Combattimento(goblin);
                         break;
                     } else {
                         getGestoreClient().manda("Scelta non valida. Riprova.");

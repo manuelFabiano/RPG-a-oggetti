@@ -1,5 +1,6 @@
 package Locations;
 
+import Server.Gioco;
 import Server.InterfacciaGestoreClient;
 
 import java.io.IOException;
@@ -23,7 +24,7 @@ public abstract class Locations {
         this.descrizione = descrizione;
     }
 
-    public abstract void esplora() throws IOException;
+    public abstract void esplora(Gioco gioco) throws IOException;
 }
 
 

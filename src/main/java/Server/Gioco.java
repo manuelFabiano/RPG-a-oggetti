@@ -65,7 +65,7 @@ public class Gioco {
     }
 
     //Metodo che gestisce i combattimenti
-    private void Combattimento(Nemico nemico) throws IOException{
+    public void Combattimento(Nemico nemico) throws IOException{
         String clientMessage;
         int danniGiocatore;
         int danniNemico;
@@ -205,11 +205,11 @@ public class Gioco {
         int luogo = random.nextInt(2);
         if (luogo == 0) {
             Bosco bosco = new Bosco(gestoreClient);
-            bosco.esplora();
+            bosco.esplora(this);
             premiPerContinuare();
         }else{
             Lago lago = new Lago(gestoreClient);
-            lago.esplora();
+            lago.esplora(this);
             premiPerContinuare();
         }
 
@@ -242,4 +242,6 @@ public class Gioco {
     public String getChiavePartita() {
         return chiavePartita;
     }
+
+    public Giocatore getGiocatore() {return giocatore;}
 }

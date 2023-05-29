@@ -1,5 +1,8 @@
 package Locations;
 
+import Personaggi.Giocatore;
+import Personaggi.Orco;
+import Server.Gioco;
 import Server.InterfacciaGestoreClient;
 
 import java.io.IOException;
@@ -15,7 +18,7 @@ public class Bosco extends Locations {
     }
 
     @Override
-    public void esplora() throws IOException {
+    public void esplora(Gioco gioco) throws IOException {
         while (true) {
             getGestoreClient().manda(getDescrizione());
             getGestoreClient().manda("1. Esplora il bosco");
@@ -32,7 +35,8 @@ public class Bosco extends Locations {
                     String avvicinamento = getGestoreClient().ricevi();
                     if (avvicinamento.equals("1")) {
                         getGestoreClient().manda("Trovi dei cadaveri ridotti a poltiglia e vieni attaccato da un orco!");
-                        // Inserire orco
+                        Orco orco = new Orco(gioco.getGiocatore());
+                        gioco.Combattimento(orco);
                         break;
                     } else if (avvicinamento.equals("2")) {
                         getGestoreClient().manda("Prosegui verso una luce trovando l'uscita del bosco!");

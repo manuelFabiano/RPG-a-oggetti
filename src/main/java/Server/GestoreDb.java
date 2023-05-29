@@ -86,8 +86,8 @@ public class GestoreDb {
         return "partita"+(conteggio+1);
     }
 
-    public void salvaPartita(Document utente, Giocatore giocatore, Gioco gioco){
-        //Preparo il document da inserire
+    public void salvaPartita(Document utente, Giocatore giocatore, Gioco gioco) {
+        // Preparo il documento da inserire
         Document partita = new Document("roundCorrente", gioco.getRoundCorrente())
                 .append("puntiVita", giocatore.getPuntiVita())
                 .append("puntiAttacco", giocatore.getPuntiAttacco())
@@ -95,15 +95,16 @@ public class GestoreDb {
                 .append("puntiAgilità", giocatore.getPuntiAgilità())
                 .append("livello", giocatore.getLivello())
                 .append("esperienza", giocatore.getEsperienza())
-                .append("arma", new Document("nome",giocatore.getArma().getNome())
-                    .append("descrizione", giocatore.getArma().getDescrizione())
-                    .append("danniBase", giocatore.getArma().getDanniBase())
-                    .append("abilita", giocatore.getArma().getAbilita()));
+                .append("arma", new Document("nome", giocatore.getArma().getNome())
+                        .append("descrizione", giocatore.getArma().getDescrizione())
+                        .append("danniBase", giocatore.getArma().getDanniBase())
+                        .append("abilita", giocatore.getArma().getAbilita()));
 
-        //Aggiorno il database
+        Document filtro = new Document("_id", utente.getObjectId("_id"));  // Assumi che "_id" sia l'ID univoco del documento "utente"
         Document aggiornamento = new Document("$set", new Document(gioco.getChiavePartita(), partita));
-        playerscollection.updateOne(utente, aggiornamento);
+        playerscollection.updateOne(filtro, aggiornamento);
     }
+
 
     public String stampaPartite(Document utente){
         StringBuilder result = new StringBuilder();

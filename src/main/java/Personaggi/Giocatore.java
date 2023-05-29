@@ -31,6 +31,8 @@ public class Giocatore extends Personaggio {
         setPuntiAgilità(partita.getInteger("puntiAgilità"));
         livello = partita.getInteger("livello");
         esperienza = partita.getInteger("esperienza");
+        Document documentArma = (Document) partita.get("arma");
+        arma = new Arma(documentArma.getString("nome"),documentArma.getString("descrizione"),documentArma.getInteger("danniBase"),documentArma.getString("abilita"));
     }
 
     public void aumentaEsperienza(int esperienza)throws IOException{

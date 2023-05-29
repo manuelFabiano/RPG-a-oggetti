@@ -44,6 +44,7 @@ public class Gioco {
         boolean gameOver = false;
         Random random = new Random();
         while (roundCorrente < ROUNDS && !gameOver){
+            gestoreClient.manda("Round: "+ roundCorrente);
             //Se è il primo round stampo la storia iniziale
             if (roundCorrente == 1){
                 stampaStoriaIniziale();
@@ -58,8 +59,13 @@ public class Gioco {
             else if (tipoIncontro == 1) {
                 luogoCasuale();
             }
+
             if(!giocatore.isVivo())
                 gameOver = true;
+
+            roundCorrente += 1;
+            gestoreDb.salvaPartita(utente, giocatore, this);
+            System.out.println("gioco salvato");
         }
     }
 
@@ -135,12 +141,10 @@ public class Gioco {
         }
         if (giocatore.isVivo()) {
             gestoreClient.manda("Complimenti! Hai vinto il combattimento!");
-            roundCorrente += 1;
             dropEsperienza = nemico.getDropEsperienza();
             gestoreClient.manda("Hai ottenuto " + dropEsperienza + " punti esperienza!");
             sleep();
             giocatore.aumentaEsperienza(dropEsperienza);
-            gestoreDb.salvaPartita(utente, giocatore, this);
         } else {
             gestoreClient.manda("Sei morto, GAME OVER!");
         }
@@ -184,7 +188,8 @@ public class Gioco {
         if (danni <= 0) {
             danni = 1; // I danni non possono essere negativi
         }
-        danni += random.nextInt(puntiAttacco);
+        if (puntiAttacco>0)
+            danni += random.nextInt(puntiAttacco);
         return danni;
     }
 

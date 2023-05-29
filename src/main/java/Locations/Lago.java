@@ -1,6 +1,7 @@
 package Locations;
 
 import Oggetti.Arma;
+import Personaggi.Goblin;
 import Server.Gioco;
 import Server.InterfacciaGestoreClient;
 
@@ -39,7 +40,8 @@ public class Lago extends Locations {
                         break;
                     } else if (avvicinamento.equals("2")) {
                         getGestoreClient().manda("Mentre ti avvicini alla riva del lago, incontri un goblin!");
-                        // Inserire la logica per avviare un combattimento con il goblin
+                        Goblin goblin = new Goblin(gioco.getGiocatore());
+                        gioco.Combattimento(goblin);
                         break;
                     } else {
                         getGestoreClient().manda("Scelta non valida. Riprova.");

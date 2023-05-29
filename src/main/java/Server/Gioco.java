@@ -64,7 +64,7 @@ public class Gioco {
     }
 
     //Metodo che gestisce i combattimenti
-    private void Combattimento(Nemico nemico) throws IOException{
+    public void Combattimento(Nemico nemico) throws IOException{
         String clientMessage;
         int danniGiocatore;
         int danniNemico;

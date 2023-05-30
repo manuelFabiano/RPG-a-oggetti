@@ -1,11 +1,10 @@
 package Personaggi;
 
 import Server.InterfacciaGestoreClient;
-import java.io.BufferedReader;
-import java.io.PrintWriter;
 
 public abstract class Personaggio {
     private InterfacciaGestoreClient gestoreClient;
+    private int maxPuntiVita = 0;
     private int puntiVita = 0;
     private int puntiAttacco = 0;
     private int puntiDifesa = 0;
@@ -59,5 +58,11 @@ public abstract class Personaggio {
         this.puntiDifesa = puntiDifesa;
     }
 
+    public int getMaxPuntiVita() {
+        return maxPuntiVita;
+    }
 
+    public void setMaxPuntiVita(int maxPuntiVita) {
+        this.maxPuntiVita = maxPuntiVita;
+    }
 }

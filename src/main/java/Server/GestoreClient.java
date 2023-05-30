@@ -1,11 +1,12 @@
 package Server;
 
+import org.bson.Document;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
-import org.bson.Document;
 
 public class GestoreClient implements Runnable, InterfacciaGestoreClient {
     private final Socket clientSocket;
@@ -53,6 +54,7 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
                             break;
                     }
                 }
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -108,6 +110,8 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
                         break;
                 }
             }
+            //aggiorno utente
+            utente = gestoreDb.aggiornaUtente(utente);
         }
     }
 
@@ -171,4 +175,6 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
     public String ricevi()throws IOException{
         return input.readLine();
     }
+
+
 }

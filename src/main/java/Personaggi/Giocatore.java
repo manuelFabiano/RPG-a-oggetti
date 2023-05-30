@@ -2,6 +2,7 @@ package Personaggi;
 
 
 import Oggetti.Arma;
+import Oggetti.Cibo;
 import Server.InterfacciaGestoreClient;
 import org.bson.Document;
 
@@ -15,6 +16,7 @@ public class Giocatore extends Personaggio {
     //Costruttore personaggio del giocatore quando si inizia una nuova partita
     public Giocatore(InterfacciaGestoreClient gestoreClient) throws IOException {
         setGestoreClient(gestoreClient);
+        setMaxPuntiVita(20);
         setPuntiVita(20);
         livello = 1;
         esperienza = 0;
@@ -37,7 +39,8 @@ public class Giocatore extends Personaggio {
 
     public void aumentaEsperienza(int esperienza)throws IOException{
         this.esperienza += esperienza;
-        while(this.esperienza > 1000){
+        while(this.esperienza >= 1000){
+            setMaxPuntiVita(getMaxPuntiVita()+2);
             livello += 1;
             getGestoreClient().manda("Sei aumentato di livello!\n");
             assegnaPunti(3);
@@ -139,12 +142,9 @@ public class Giocatore extends Personaggio {
         }
     }
 
-    public void setLivello(int livello) {
-        this.livello = livello;
-    }
-
-    public void setEsperienza(int esperienza) {
-        this.esperienza = esperienza;
+    public void mangia(Cibo cibo){
+        int nuovaVita = getPuntiVita() + cibo.getPuntiVita();
+        setPuntiVita(Math.min(nuovaVita, getMaxPuntiVita()));
     }
 
     public Arma getArma() {

@@ -28,7 +28,8 @@ public abstract class Nemico extends Personaggio{
     }
     protected int generaPuntiDifesa(int puntiDifesaGiocatore){
         int puntiDifesaRandom = random.nextInt(5) - 2; //genera un numero casuale da -2 a 2
-        return puntiDifesaGiocatore + puntiDifesaRandom;
+        int puntiDifesa = puntiDifesaGiocatore + puntiDifesaRandom;
+        return Math.max(puntiDifesa, 0);
     }
     protected int generaPuntiAgilità(int puntiAgilitàGiocatore){
         int puntiAgilitàRandom = random.nextInt(5) - 2; //genera un numero casuale da -2 a 2

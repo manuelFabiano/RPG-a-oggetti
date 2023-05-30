@@ -24,7 +24,7 @@ public class Gioco {
         random = new Random();
         this.giocatore = new Giocatore(gestoreClient);
         this.utente = utente;
-        chiavePartita = gestoreDb.nuovaPartita(utente, giocatore);
+        chiavePartita = gestoreDb.nuovaPartita(utente, giocatore, this);
     }
 
     //Continua la partita
@@ -51,12 +51,12 @@ public class Gioco {
                 premiPerContinuare();
             }
             //logica di gioco:
-            tipoIncontro = random.nextInt(2);
+            tipoIncontro = random.nextInt(11);
             //INCONTRO CON UN NEMICO
-            if(tipoIncontro == 0) {
+            if(tipoIncontro <= 6) {
                 nemicoCasuale();
             }
-            else if (tipoIncontro == 1) {
+            else if (tipoIncontro > 6) {
                 luogoCasuale();
             }
 
@@ -75,6 +75,7 @@ public class Gioco {
         int danniGiocatore;
         int danniNemico;
         int dropEsperienza;
+        int puntiDifesaOriginali = giocatore.getPuntiDifesa();
         gestoreClient.manda("Inizia il combattimento con " + nemico.getNome() + "(" + nemico.getTipo() + ")");
         while (giocatore.isVivo() && nemico.isVivo()) {
             gestoreClient.manda("HP del nemico: "+ nemico.getPuntiVita());
@@ -87,26 +88,26 @@ public class Gioco {
                     case "1":
                         if (giocatorePrimo) {
                             //Attacca prima il giocatore
-                            danniGiocatore = calcolaDanni(giocatore.getPuntiAttacco(), nemico.getPuntiDifesa());
+                            danniGiocatore = calcolaDanni(giocatore, nemico);
                             nemico.subisciDanni(danniGiocatore);
                             gestoreClient.manda("Hai attaccato il nemico e gli hai inflitto " + danniGiocatore + " danni!");
                             //Sleep di 1 secondo.
                             sleep();
                             if(!nemico.isVivo()) break;
                             //Adesso attacca il nemico
-                            danniNemico = calcolaDanni(nemico.getPuntiAttacco(), giocatore.getPuntiDifesa());
+                            danniNemico = calcolaDanni(nemico, giocatore);
                             giocatore.subisciDanni(danniNemico);
                             gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
                             premiPerContinuare();
                         }else{
                             //Attacca prima il nemico
-                            danniNemico = calcolaDanni(nemico.getPuntiAttacco(), giocatore.getPuntiDifesa());
+                            danniNemico = calcolaDanni(nemico, giocatore);
                             giocatore.subisciDanni(danniNemico);
                             gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
                             //Sleep di 1 secondo.
                             sleep();
                             if(!giocatore.isVivo()) break;
-                            danniGiocatore = calcolaDanni(giocatore.getPuntiAttacco(), nemico.getPuntiDifesa());
+                            danniGiocatore = calcolaDanni(giocatore, nemico);
                             nemico.subisciDanni(danniGiocatore);
                             gestoreClient.manda("Hai attaccato il nemico e gli hai inflitto " + danniGiocatore + " danni!");
                             premiPerContinuare();
@@ -114,8 +115,10 @@ public class Gioco {
                         break;
                     case "2":
                         //Il giocatore ha scelto di aumentare la propria difesa, raddoppiando i punti di difesa
+                        //Aumento la difesa
+                        giocatore.setPuntiDifesa((giocatore.getPuntiDifesa())*2);
                         gestoreClient.manda("Ti metti in posizione di difesa!.");
-                        danniNemico = calcolaDanni(nemico.getPuntiAttacco(), giocatore.getPuntiDifesa() * 2);
+                        danniNemico = calcolaDanni(nemico, giocatore);
                         giocatore.subisciDanni(danniNemico);
                         gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
                         premiPerContinuare();
@@ -126,7 +129,7 @@ public class Gioco {
                             gestoreClient.manda("Complimenti! Sei riuscito a schivare l'attacco del nemico");
                             premiPerContinuare();
                         }else{
-                            danniNemico = calcolaDanni(nemico.getPuntiAttacco(), giocatore.getPuntiDifesa());
+                            danniNemico = calcolaDanni(nemico, giocatore);
                             giocatore.subisciDanni(danniNemico);
                             gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
                             premiPerContinuare();
@@ -140,6 +143,7 @@ public class Gioco {
             }
         }
         if (giocatore.isVivo()) {
+            giocatore.setPuntiDifesa(puntiDifesaOriginali);
             gestoreClient.manda("Complimenti! Hai vinto il combattimento!");
             dropEsperienza = nemico.getDropEsperienza();
             gestoreClient.manda("Hai ottenuto " + dropEsperienza + " punti esperienza!");
@@ -151,7 +155,7 @@ public class Gioco {
     }
 
 
-    private void sleep(){
+    public void sleep(){
         try {
             Thread.sleep(1000); // Ritardo di 1 secondo
         } catch (InterruptedException e) {
@@ -182,14 +186,20 @@ public class Gioco {
         return Integer.toString(input);
     }
 
-    private int calcolaDanni(int puntiAttacco, int puntiDifesa) {
-        // Calcola i danni considerando i punti di attacco e difesa
-        int danni = puntiAttacco - puntiDifesa;
-        if (danni <= 0) {
-            danni = 1; // I danni non possono essere negativi
+    private int calcolaDanni(Personaggio attaccante, Personaggio difensore) {
+        int danni;
+        if(attaccante instanceof Giocatore){
+            danni = ((Giocatore) attaccante).getArma().getDanniBase() - difensore.getPuntiDifesa();
+
+        }else {
+            // Calcola i danni considerando i punti di attacco e difesa
+            danni = attaccante.getPuntiAttacco() - difensore.getPuntiDifesa();
         }
-        if (puntiAttacco>0)
-            danni += random.nextInt(puntiAttacco);
+        if (danni <= 0) {
+            danni = 1; // I danni non possono essere negativi o nulli
+        }
+        danni += random.nextInt(Math.max(attaccante.getPuntiAttacco(), 1));
+
         return danni;
     }
 
@@ -206,18 +216,20 @@ public class Gioco {
     }
 
     private void luogoCasuale()throws IOException{
-        int luogo = random.nextInt(2);
-        if (luogo == 0) {
+        int luogo = random.nextInt(11);
+        if (luogo > 6) {
             Bosco bosco = new Bosco(gestoreClient);
             bosco.esplora(this);
             premiPerContinuare();
-        }else{
+        }else if(luogo > 2){
             Lago lago = new Lago(gestoreClient);
             lago.esplora(this);
             premiPerContinuare();
+        }else{
+            Accampamento accampamento = new Accampamento(gestoreClient);
+            accampamento.esplora(this);
+            premiPerContinuare();
         }
-
-
     }
 
 
@@ -251,7 +263,15 @@ public class Gioco {
         return giocatore;
     }
 
-    public void setGiocatore(Giocatore giocatore) {
-        this.giocatore = giocatore;
+    public GestoreDb getGestoreDb() {
+        return gestoreDb;
+    }
+
+    public Document getUtente() {
+        return utente;
+    }
+
+    public void setUtente(Document utente) {
+        this.utente = utente;
     }
 }

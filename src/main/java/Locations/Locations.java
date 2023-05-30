@@ -1,5 +1,6 @@
 package Locations;
 
+import Oggetti.Arma;
 import Server.Gioco;
 import Server.InterfacciaGestoreClient;
 
@@ -26,6 +27,8 @@ public abstract class Locations {
     }
 
     public abstract void esplora(Gioco gioco) throws IOException;
+
+    protected abstract Arma creaArma();
 }
 
 

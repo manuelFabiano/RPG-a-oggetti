@@ -57,7 +57,8 @@ public class Lago extends Locations {
         }
     }
 
-    private Arma creaArma(){
+    @Override
+    protected Arma creaArma(){
         String descrizioneArma = "Un'ascia affilata, forgiata con maestria e incisa con simboli runici.";
         Random random = new Random();
         int danniBase = 5 + random.nextInt(11);

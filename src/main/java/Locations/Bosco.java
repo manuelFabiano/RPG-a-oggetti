@@ -1,12 +1,15 @@
 package Locations;
 
+import Oggetti.Arma;
 import Personaggi.Orco;
 import Server.Gioco;
 import Server.InterfacciaGestoreClient;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class Bosco extends Locations {
+    Random random;
 
     public Bosco(InterfacciaGestoreClient gestoreClient) {
         String descrizione = "Ti ritrovi di fronte a un bosco tetro e spaventoso.\n" +
@@ -14,6 +17,7 @@ public class Bosco extends Locations {
                 "Ogni tanto, un ramo si spezza improvvisamente, rompendo il silenzio e facendoti sobbalzare.";
         super.setDescrizione(descrizione);
         super.setGestoreClient(gestoreClient);
+        random = new Random();
     }
 
     @Override
@@ -40,7 +44,11 @@ public class Bosco extends Locations {
                         break;
                     } else if (avvicinamento.equals("2")) {
                         getGestoreClient().manda("Prosegui verso una luce trovando l'uscita del bosco!");
-                        // continua il loop con il prossimo livello
+                        int mele = random.nextInt(3)+1;
+                        getGestoreClient().manda("Camminando verso l'uscita hai raccolto " + mele + " Mele!");
+                        gioco.getGestoreDb().incrementaQuantita(gioco.getUtente(), gioco.getChiavePartita(), "mela", mele);
+
+
                         break;
                     } else if (avvicinamento.equals("3")) {
                         getGestoreClient().manda("Trovi una tenda al cui interno risiede un mercante");
@@ -57,5 +65,10 @@ public class Bosco extends Locations {
                 getGestoreClient().manda("Scelta non valida. Riprova.");
             }
         }
+    }
+
+    @Override
+    protected Arma creaArma() {
+        return null;
     }
 }

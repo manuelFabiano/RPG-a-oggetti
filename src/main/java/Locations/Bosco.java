@@ -46,7 +46,7 @@ public class Bosco extends Locations {
                         getGestoreClient().manda("Prosegui verso una luce trovando l'uscita del bosco!");
                         int mele = random.nextInt(3)+1;
                         getGestoreClient().manda("Camminando verso l'uscita hai raccolto " + mele + " Mele!");
-                        gioco.getGestoreDb().incrementaQuantita(gioco.getUtente(), gioco.getChiavePartita(), "mela", mele);
+                        gioco.getGestoreDb().incrementaQuantita(gioco, "mela", mele);
 
 
                         break;

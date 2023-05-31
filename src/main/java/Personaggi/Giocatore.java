@@ -28,6 +28,7 @@ public class Giocatore extends Personaggio {
     public Giocatore(InterfacciaGestoreClient gestoreClient, Document partita){
         setGestoreClient(gestoreClient);
         setPuntiVita(partita.getInteger("puntiVita"));
+        setMaxPuntiVita(partita.getInteger("maxPuntiVita"));
         setPuntiAttacco(partita.getInteger("puntiAttacco"));
         setPuntiDifesa(partita.getInteger("puntiDifesa"));
         setPuntiAgilità(partita.getInteger("puntiAgilità"));
@@ -41,6 +42,7 @@ public class Giocatore extends Personaggio {
         this.esperienza += esperienza;
         while(this.esperienza >= 1000){
             setMaxPuntiVita(getMaxPuntiVita()+2);
+            setPuntiVita(getPuntiVita()+2);
             livello += 1;
             getGestoreClient().manda("Sei aumentato di livello!\n");
             assegnaPunti(3);
@@ -145,6 +147,7 @@ public class Giocatore extends Personaggio {
     public void mangia(Cibo cibo){
         int nuovaVita = getPuntiVita() + cibo.getPuntiVita();
         setPuntiVita(Math.min(nuovaVita, getMaxPuntiVita()));
+        getGestoreClient().manda("Hai mangiato 1 " + cibo.getNome() + " e hai recuperato "+ cibo.getPuntiVita() +" HP!");
     }
 
     public Arma getArma() {

@@ -1,12 +1,13 @@
 package Server;
 
+import Oggetti.Cibo;
 import Personaggi.Giocatore;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
-import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
@@ -139,19 +140,24 @@ public class GestoreDb {
     }
 
     public Document getInventario(Document utente, String chiave) {
-        System.out.println(chiave);
-
-        String documentoJSON = utente.toJson();
-        String documentoFormattato = documentoJSON.toString();
-        System.out.println(documentoFormattato);
-
         Document partita = utente.get(chiave, Document.class);
         if (partita != null) {
-            System.out.println("test");
             return partita.get("inventario", Document.class);
         }
 
         return null; // La partita specificata non esiste nel documento Utente
+    }
+
+    public String getInventarioStampabile(Document inventario){
+        StringBuilder sb = new StringBuilder();
+        for (String oggetto : inventario.keySet()) {
+            Document documentOggetto = (Document) inventario.get(oggetto);
+            int quantita = documentOggetto.getInteger("quantita", 0);
+            if (quantita > 0) {
+                sb.append(documentOggetto.getString("nome")).append(": ").append(quantita).append("\n");
+            }
+        }
+        return sb.toString();
     }
 
     public void disconnetti() {
@@ -169,8 +175,8 @@ public class GestoreDb {
         return inventario;
     }
 
-    public void incrementaQuantita(Document utente, String chiavePartita, String chiaveOggetto, int incremento) {
-        Document inventario = getInventario(utente,chiavePartita);
+    public void incrementaQuantita(Gioco gioco, String chiaveOggetto, int incremento) {
+        Document inventario = getInventario(gioco.getUtente(), gioco.getChiavePartita());
         if (inventario != null) {
             Document oggetto = inventario.get(chiaveOggetto, Document.class);
             if (oggetto != null) {
@@ -179,6 +185,22 @@ public class GestoreDb {
                 oggetto.put("quantita", nuovaQuantita);
             }
         }
+    }
+
+    public boolean decrementaQuantita(Gioco gioco, String chiaveOggetto) {
+        Document inventario = getInventario(gioco.getUtente(), gioco.getChiavePartita());
+        if (inventario != null) {
+            Document oggetto = inventario.get(chiaveOggetto, Document.class);
+            if (oggetto != null) {
+                int quantita = oggetto.getInteger("quantita", 0);
+                if (quantita > 0) {
+                    int nuovaQuantita = quantita - 1;
+                    oggetto.put("quantita", nuovaQuantita);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     public Document aggiornaUtente(Document utente){
@@ -193,6 +215,11 @@ public class GestoreDb {
                 .append("puntiVita", puntiVita)
                 .append("quantita", quantita);
         return oggetto;
+    }
+
+    public Cibo getCibo(Document inventario, String chiaveCibo){
+        Document documentCibo = (Document) inventario.get(chiaveCibo);
+        return new Cibo(documentCibo.getString("nome"), documentCibo.getString("descrizione"), documentCibo.getInteger("puntiVita"));
     }
 
 }

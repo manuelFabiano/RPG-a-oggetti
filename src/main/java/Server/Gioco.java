@@ -1,8 +1,12 @@
 package Server;
 
-import Locations.*;
+import Locations.Accampamento;
+import Locations.Bosco;
+import Locations.Lago;
+import Oggetti.Cibo;
 import Personaggi.*;
 import org.bson.Document;
+
 import java.io.IOException;
 import java.util.Random;
 
@@ -28,7 +32,7 @@ public class Gioco {
     }
 
     //Continua la partita
-    public Gioco(InterfacciaGestoreClient gestoreClient, GestoreDb gestoreDb, Document utente, Document partita, String chiavePartita) throws IOException {
+    public Gioco(InterfacciaGestoreClient gestoreClient, GestoreDb gestoreDb, Document utente, Document partita, String chiavePartita){
         this.gestoreClient = gestoreClient;
         this.gestoreDb = gestoreDb;
         this.roundCorrente = partita.getInteger("roundCorrente");
@@ -41,10 +45,12 @@ public class Gioco {
     //inizia un loop per gestire ogni round del gioco
     public void loop()throws IOException{
         int tipoIncontro;
-        boolean gameOver = false;
+        boolean esci = false;
         Random random = new Random();
-        while (roundCorrente < ROUNDS && !gameOver){
+        while (roundCorrente < ROUNDS && !esci){
             gestoreClient.manda("Round: "+ roundCorrente);
+            gestoreClient.manda("Livello: "+ giocatore.getLivello());
+            gestoreClient.manda("HP: "+ giocatore.getPuntiVita()+"/"+ giocatore.getMaxPuntiVita());
             //Se è il primo round stampo la storia iniziale
             if (roundCorrente == 1){
                 stampaStoriaIniziale();
@@ -60,12 +66,56 @@ public class Gioco {
                 luogoCasuale();
             }
 
-            if(!giocatore.isVivo())
-                gameOver = true;
+            if(!giocatore.isVivo()) {
+                break;
+            }
+            gestoreClient.manda("Round "+ roundCorrente +" terminato");
+            String risposta;
+            while(true){
+                gestoreClient.manda("Cosa vuoi fare?");
+                gestoreClient.manda("1. Continua\n" +
+                        "2. Apri inventario\n" +
+                        "3. Esci\nPASS");
+                risposta = gestoreClient.ricevi();
+                if(risposta.equals("1")) {
+                    break;
+                }
+                else if (risposta.equals("2")) {
+                    apriInventario();
+                }else if (risposta.equals("3")){
+                    esci = true;
+                    break;
+                }
+            }
 
             roundCorrente += 1;
             gestoreDb.salvaPartita(utente, giocatore, this);
             System.out.println("gioco salvato");
+        }
+    }
+
+    private void apriInventario()throws IOException {
+        // Ottieni gli oggetti con quantità maggiore di 0
+        String inventario;
+        while (true) {
+            inventario = gestoreDb.getInventarioStampabile(gestoreDb.getInventario(utente, chiavePartita));
+            if (!inventario.isEmpty()) {
+                gestoreClient.manda("Oggetti nell'inventario:");
+                gestoreClient.manda(inventario);
+                gestoreClient.manda("Cosa vuoi consumare? (Premi invio per tornare indietro\nPASS)");
+                String risposta = gestoreClient.ricevi();
+                if (risposta.equals("\n"))
+                    break;
+                if (gestoreDb.decrementaQuantita(this, risposta.toLowerCase())) {
+                    Cibo cibo = gestoreDb.getCibo(gestoreDb.getInventario(utente, chiavePartita), risposta.toLowerCase());
+                    giocatore.mangia(cibo);
+                }
+            } else {
+                gestoreClient.manda("Il tuo inventario è vuoto!");
+                premiPerContinuare();
+                break;
+            }
+
         }
     }
 
@@ -79,7 +129,7 @@ public class Gioco {
         gestoreClient.manda("Inizia il combattimento con " + nemico.getNome() + "(" + nemico.getTipo() + ")");
         while (giocatore.isVivo() && nemico.isVivo()) {
             gestoreClient.manda("HP del nemico: "+ nemico.getPuntiVita());
-            gestoreClient.manda("I tuoi HP: "+ giocatore.getPuntiVita());
+            gestoreClient.manda("HP: "+ giocatore.getPuntiVita()+"/"+ giocatore.getMaxPuntiVita());
             //Chiedo all'utente cosa vuole fare
             if(((clientMessage = inputCombattimento()) != null)){
                 System.out.println("Messaggio dal client: " + clientMessage);
@@ -190,7 +240,6 @@ public class Gioco {
         int danni;
         if(attaccante instanceof Giocatore){
             danni = ((Giocatore) attaccante).getArma().getDanniBase() - difensore.getPuntiDifesa();
-
         }else {
             // Calcola i danni considerando i punti di attacco e difesa
             danni = attaccante.getPuntiAttacco() - difensore.getPuntiDifesa();

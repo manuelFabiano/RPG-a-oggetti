@@ -119,7 +119,7 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
         manda("Inserisci l'username:\nPASS");
         String username = ricevi();
         System.out.println(username);
-        manda("Inserisci una password\nPASS");
+        manda("Inserisci la tua password:\nPASS");
         String password = ricevi();
         System.out.println(password);
         try {

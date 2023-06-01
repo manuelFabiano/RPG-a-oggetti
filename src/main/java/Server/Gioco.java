@@ -5,6 +5,7 @@ import Locations.Bosco;
 import Locations.Lago;
 import Oggetti.Cibo;
 import Personaggi.*;
+import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 
 import java.io.IOException;
@@ -15,8 +16,8 @@ public class Gioco {
     private final GestoreDb gestoreDb;
     private static final int ROUNDS = 50;
     private int roundCorrente;
-    private Giocatore giocatore;
-    private Random random;
+    private final Giocatore giocatore;
+    private final Random random;
     private final String chiavePartita;
     Document utente;
 
@@ -58,9 +59,9 @@ public class Gioco {
             }
             //logica di gioco:
             tipoIncontro = random.nextInt(11);
-            //INCONTRO CON UN NEMICO
+            //INCONTRO CASUALE
             if(tipoIncontro <= 6) {
-                nemicoCasuale();
+                incontroCasuale();
             }
             else if (tipoIncontro > 6) {
                 luogoCasuale();
@@ -102,9 +103,10 @@ public class Gioco {
             if (!inventario.isEmpty()) {
                 gestoreClient.manda("Oggetti nell'inventario:");
                 gestoreClient.manda(inventario);
-                gestoreClient.manda("Cosa vuoi consumare? (Premi invio per tornare indietro\nPASS)");
+                gestoreClient.manda("Cosa vuoi consumare? (Premi invio per tornare indietro)\nPASS");
                 String risposta = gestoreClient.ricevi();
-                if (risposta.equals("\n"))
+                System.out.println(risposta);
+                if (risposta.isEmpty())
                     break;
                 if (gestoreDb.decrementaQuantita(this, risposta.toLowerCase())) {
                     Cibo cibo = gestoreDb.getCibo(gestoreDb.getInventario(utente, chiavePartita), risposta.toLowerCase());
@@ -195,6 +197,11 @@ public class Gioco {
         if (giocatore.isVivo()) {
             giocatore.setPuntiDifesa(puntiDifesaOriginali);
             gestoreClient.manda("Complimenti! Hai vinto il combattimento!");
+            //drop oggetti
+            gestoreClient.manda("Il nemico possedeva "+ nemico.getQuantitaDrop() +" "+ StringUtils.capitalize(nemico.getDropOggetto()));
+            gestoreDb.incrementaQuantita(this, nemico.getDropOggetto(), nemico.getQuantitaDrop());
+            sleep();
+            //drop esperienza
             dropEsperienza = nemico.getDropEsperienza();
             gestoreClient.manda("Hai ottenuto " + dropEsperienza + " punti esperienza!");
             sleep();
@@ -252,14 +259,17 @@ public class Gioco {
         return danni;
     }
 
-    private void nemicoCasuale()throws IOException{
-        int nemico = random.nextInt(11);
+    private void incontroCasuale()throws IOException{
+        int nemico = random.nextInt(10)+1;
         if(nemico > 7){
             Orco orco = new Orco(giocatore);
             Combattimento(orco);
-        }else{
+        }else if(nemico > 4){
             Goblin goblin = new Goblin(giocatore);
             Combattimento(goblin);
+        }else{
+            Cavaliere cavaliere = new Cavaliere(giocatore);
+            cavaliere.interagisci(this);
         }
 
     }
@@ -322,5 +332,9 @@ public class Gioco {
 
     public void setUtente(Document utente) {
         this.utente = utente;
+    }
+
+    public InterfacciaGestoreClient getGestoreClient() {
+        return gestoreClient;
     }
 }

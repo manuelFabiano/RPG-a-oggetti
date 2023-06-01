@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.concurrent.Semaphore;
 
 public class TerminalClientGUI extends Application {
 
@@ -26,7 +27,8 @@ public class TerminalClientGUI extends Application {
     private Label hpLabel;
     private Label levelLabel;
     private Label roundLabel;
-    private boolean canSendInput = false;
+
+    private Semaphore inputSemaphore = new Semaphore(0);
 
     @Override
     public void start(Stage primaryStage) {
@@ -36,14 +38,11 @@ public class TerminalClientGUI extends Application {
 
         inputField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                if (canSendInput) {
                     outputArea.clear();
                     String clientResponse = inputField.getText();
                     sendMessageToServer(clientResponse);
                     inputField.clear();
-                    canSendInput = false; // Reimposta canSendInput su false
                     event.consume();
-                }
             }
         });
 
@@ -98,8 +97,11 @@ public class TerminalClientGUI extends Application {
                 try {
                     String serverMessage;
                     while ((serverMessage = input.readLine()) != null) {
-                        updateOutputArea(serverMessage);
-                        updateLabels(serverMessage);
+                        if (serverMessage.equals("PASS")) {
+                            inputSemaphore.release(); // Rilascia il semaforo per consentire l'invio dell'input
+                        } else {
+                            updateOutputArea(serverMessage);
+                        }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -113,17 +115,23 @@ public class TerminalClientGUI extends Application {
     }
 
     private void sendMessageToServer(String message) {
-        output.println(message);
+        try {
+            inputSemaphore.acquire(); // Attendere il rilascio del semaforo prima di inviare l'input
+            output.println(message);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void updateOutputArea(String text) {
         if (!text.startsWith("HP:") && !text.startsWith("Livello:") && !text.startsWith("Round:")) {
-            if (!text.equals("PASS")) {
-                outputArea.appendText(text + "\n");
-            } else {
-                canSendInput = true;
+            if (!text.equals("PASS\n")) {
+                Platform.runLater(() -> outputArea.appendText(text + "\n"));
             }
-        }
+        } else {
+        // Aggiorna i valori delle label HP, Livello e Round
+        Platform.runLater(() -> updateLabels(text));
+    }
     }
 
     private void updateLabels(String text) {

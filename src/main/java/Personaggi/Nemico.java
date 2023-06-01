@@ -6,10 +6,12 @@ public abstract class Nemico extends Personaggio{
     private String nome;
     private String tipo;
     private int dropEsperienza;
-    protected Random random;
+    private String dropOggetto;
+    private int quantitaDrop;
+    public Random random = new Random();
+
 
     protected int generaPuntiVita(int livelloGiocatore, int hpMin, int hpMax) {
-        random = new Random();
         // Formula per determinare gli HP dei nemici in base al livello del giocatore
         //Sfrutta una proporzione di aumento degli HP per ogni livello acquisito dal giocatore e aggiunge un fattore casuale
         // HP minimi dei nemici a livello 1 del giocatore
@@ -62,5 +64,40 @@ public abstract class Nemico extends Personaggio{
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    protected String generaDrop() {
+        int numeroRandom = random.nextInt(6);
+        switch (numeroRandom) {
+            case 0:
+                return "mela";
+            case 1:
+                return "pane";
+            case 2:
+                return "cioccolato";
+            case 3:
+                return "banana";
+            case 4:
+                return "pollo";
+            case 5:
+                return "manzo";
+        }
+        return null;
+    }
+
+    public String getDropOggetto() {
+        return dropOggetto;
+    }
+
+    public void setDropOggetto(String dropOggetto) {
+        this.dropOggetto = dropOggetto;
+    }
+
+    public int getQuantitaDrop() {
+        return quantitaDrop;
+    }
+
+    public void setQuantitaDrop(int quantitaDrop) {
+        this.quantitaDrop = quantitaDrop;
     }
 }

@@ -8,12 +8,16 @@ public class Goblin extends Inumano{
     public Goblin(Giocatore giocatore) {
         setTipo("Goblin");
         setNome();
+        //stats
         setPuntiVita(generaPuntiVita(giocatore.getLivello(), 6, 18));
         setPuntiAttacco(generaPuntiAttacco(giocatore.getPuntiAttacco()));
         setPuntiDifesa(generaPuntiDifesa(giocatore.getPuntiDifesa()));
         setPuntiAttacco(generaPuntiAgilità(giocatore.getPuntiAgilità()));
+        //drop esperienza
         setDropEsperienza(generaDropEsperienza());
-
+        //drop oggetti
+        setDropOggetto(generaDrop());
+        setQuantitaDrop(random.nextInt(2)+1);
     }
 
     @Override

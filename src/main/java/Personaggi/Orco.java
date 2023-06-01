@@ -11,7 +11,11 @@ public class Orco extends Inumano {
         setPuntiAttacco(generaPuntiAttacco(giocatore.getPuntiAttacco()));
         setPuntiDifesa(generaPuntiDifesa(giocatore.getPuntiDifesa()));
         setPuntiAgilità(generaPuntiAgilità(giocatore.getPuntiAgilità()));
+        //drop esperienza
         setDropEsperienza(generaDropEsperienza());
+        //drop oggetti
+        setDropOggetto(generaDrop());
+        setQuantitaDrop(random.nextInt(4)+1);
     }
 
     @Override

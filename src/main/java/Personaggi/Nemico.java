@@ -2,12 +2,11 @@ package Personaggi;
 
 import java.util.Random;
 
-public abstract class Nemico extends Personaggio{
-    private String nome;
-    private String tipo;
+public abstract class Nemico extends PersonaggioCombattente {
     private int dropEsperienza;
     private String dropOggetto;
     private int quantitaDrop;
+    private String tipo;
     public Random random = new Random();
 
 
@@ -40,14 +39,6 @@ public abstract class Nemico extends Personaggio{
     protected int generaDropEsperienza(){
         int dropBase = 500;
         return dropBase + (random.nextInt(501));
-    }
-
-    public void setNome() {
-        this.nome = Nomi.getNomeRandom();
-    }
-
-    public String getNome() {
-        return nome;
     }
 
     public int getDropEsperienza() {

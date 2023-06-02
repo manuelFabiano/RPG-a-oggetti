@@ -8,9 +8,10 @@ import org.bson.Document;
 
 import java.io.IOException;
 
-public class Giocatore extends Personaggio {
+public class Giocatore extends PersonaggioCombattente {
     private int livello;
     private int esperienza;
+    private int soldi;
     private Arma arma;
 
     //Costruttore personaggio del giocatore quando si inizia una nuova partita
@@ -20,6 +21,7 @@ public class Giocatore extends Personaggio {
         setPuntiVita(20);
         livello = 1;
         esperienza = 0;
+        soldi = 0;
         arma = new Arma("Spada di Legno","Una normale spada di legno", 2,"Nessuna");
         assegnaPunti(15);
     }
@@ -34,6 +36,7 @@ public class Giocatore extends Personaggio {
         setPuntiAgilità(partita.getInteger("puntiAgilità"));
         livello = partita.getInteger("livello");
         esperienza = partita.getInteger("esperienza");
+        soldi = partita.getInteger("soldi");
         Document documentArma = (Document) partita.get("arma");
         arma = new Arma(documentArma.getString("nome"),documentArma.getString("descrizione"),documentArma.getInteger("danniBase"),documentArma.getString("abilita"));
     }
@@ -148,6 +151,7 @@ public class Giocatore extends Personaggio {
         int nuovaVita = getPuntiVita() + cibo.getPuntiVita();
         setPuntiVita(Math.min(nuovaVita, getMaxPuntiVita()));
         getGestoreClient().manda("Hai mangiato 1 " + cibo.getNome() + " e hai recuperato "+ cibo.getPuntiVita() +" HP!");
+        getGestoreClient().manda("HP:"+getPuntiVita()+"/"+getMaxPuntiVita());
     }
 
     public Arma getArma() {
@@ -156,5 +160,13 @@ public class Giocatore extends Personaggio {
 
     public void setArma(Arma arma) {
         this.arma = arma;
+    }
+
+    public int getSoldi() {
+        return soldi;
+    }
+
+    public void decrementaSoldi(int quantita) {
+        soldi -= quantita;
     }
 }

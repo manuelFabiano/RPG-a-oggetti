@@ -58,13 +58,17 @@ public class Gioco {
                 premiPerContinuare();
             }
             //logica di gioco:
-            tipoIncontro = random.nextInt(11);
+            tipoIncontro = random.nextInt(100)+1;
             //INCONTRO CASUALE
-            if(tipoIncontro <= 6) {
+            if(tipoIncontro <= 60) {
                 incontroCasuale();
             }
-            else if (tipoIncontro > 6) {
+            else if (tipoIncontro <= 90) {
                 luogoCasuale();
+            }else{
+                Mercante mercante = new Mercante(this);
+                gestoreClient.manda("Vagando hai incontrato la tenda di " + mercante.getNome() + " il mercante!" );
+                mercante.interagisci();
             }
 
             if(!giocatore.isVivo()) {
@@ -243,7 +247,7 @@ public class Gioco {
         return Integer.toString(input);
     }
 
-    private int calcolaDanni(Personaggio attaccante, Personaggio difensore) {
+    private int calcolaDanni(PersonaggioCombattente attaccante, PersonaggioCombattente difensore) {
         int danni;
         if(attaccante instanceof Giocatore){
             danni = ((Giocatore) attaccante).getArma().getDanniBase() - difensore.getPuntiDifesa();
@@ -260,11 +264,11 @@ public class Gioco {
     }
 
     private void incontroCasuale()throws IOException{
-        int nemico = random.nextInt(10)+1;
-        if(nemico > 7){
+        int nemico = random.nextInt(100)+1;
+        if(nemico <= 30){
             Orco orco = new Orco(giocatore);
             Combattimento(orco);
-        }else if(nemico > 4){
+        }else if(nemico <= 80){
             Goblin goblin = new Goblin(giocatore);
             Combattimento(goblin);
         }else{

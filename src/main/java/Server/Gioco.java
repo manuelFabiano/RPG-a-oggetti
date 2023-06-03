@@ -192,8 +192,19 @@ public class Gioco {
                         }
                         break;
                     case "4":
+                        //Apri inventario
+                        apriInventario();
+                        sleep();
+                        //Il nemico attacca
+                        danniNemico = calcolaDanni(nemico, giocatore);
+                        giocatore.subisciDanni(danniNemico);
+                        gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
+                        premiPerContinuare();
+                        break;
+                    case "5":
                         gestoreClient.manda("Il giocatore fugge dal combattimento.");
                         return; // Termina il metodo e il combattimento
+
                 }
 
             }
@@ -235,12 +246,13 @@ public class Gioco {
                 "1. Attacca\n" +
                 "2. Difenditi\n" +
                 "3. Schiva\n" +
-                "4. Scappa\n" +
+                "4. Inventario\n" +
+                "5. Scappa\n" +
                 "PASS");
         int input = -1;
-        while (input < 0 || input > 4) {
+        while (input < 0 || input > 5) {
             input = Integer.parseInt(gestoreClient.ricevi());
-            if (input < 0 || input > 4) {
+            if (input < 0 || input > 5) {
                 gestoreClient.manda("Scelta non valida.");
             }
         }

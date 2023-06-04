@@ -277,15 +277,18 @@ public class Gioco {
 
     private void incontroCasuale()throws IOException{
         int nemico = random.nextInt(100)+1;
-        if(nemico <= 30){
+        if(nemico <= 25){
             Orco orco = new Orco(giocatore);
             Combattimento(orco);
-        }else if(nemico <= 80){
+        }else if(nemico <= 50){
             Goblin goblin = new Goblin(giocatore);
             Combattimento(goblin);
-        }else{
+        }else if(nemico <= 75) {
             Cavaliere cavaliere = new Cavaliere(giocatore);
             cavaliere.interagisci(this);
+        } else {
+            Brigante brigante = new Brigante(giocatore);
+            brigante.interagisci(this, this.getGiocatore());
         }
 
     }

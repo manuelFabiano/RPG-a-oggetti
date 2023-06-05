@@ -55,6 +55,7 @@ public class Bosco extends Locations {
                         getGestoreClient().manda("Trovi una tenda al cui interno risiede un mercante");
                         Mercante mercante = new Mercante(gioco);
                         mercante.interagisci();
+                        break;
                     }else {
                         getGestoreClient().manda("Scelta non valida. Riprova.");
                     }

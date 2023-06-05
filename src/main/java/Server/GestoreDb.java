@@ -128,7 +128,8 @@ public class GestoreDb {
             String chiave = entry.getKey();
             if (chiave.contains("partita")) {
                 Document partita = utente.get(chiave, Document.class);
-                result.append(chiave + ": round " + partita.getInteger("roundCorrente") + " - livello " + partita.getInteger("livello") + "\n" );
+                if(partita.getInteger("puntiVita")>0)
+                    result.append(chiave + ": round " + partita.getInteger("roundCorrente") + " - livello " + partita.getInteger("livello") + "\n" );
             }
         }
         return result.toString();

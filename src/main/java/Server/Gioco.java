@@ -286,15 +286,21 @@ public class Gioco {
         if(nemico <= 20){
             Orco orco = new Orco(giocatore.getLivello()); //20%
             Combattimento(orco);
-        }else if(nemico <= 60){
+        }else if(nemico <= 60) {
             Goblin goblin = new Goblin(giocatore.getLivello()); //40%
             Combattimento(goblin);
-        }else if(nemico <= 80) {
-            Cavaliere cavaliere = new Cavaliere(gestoreClient, giocatore.getLivello()); //20%
+        }else if (nemico <= 75 ){
+            Strega strega = new Strega(giocatore.getLivello()); //15%
+            Combattimento(strega);
+        }else if (nemico <= 80){
+            Drago drago = new Drago(giocatore.getLivello()); //5%
+            Combattimento(drago);
+        }else if(nemico <= 90) {
+            Cavaliere cavaliere = new Cavaliere(gestoreClient, giocatore.getLivello()); //10%
             cavaliere.interagisci(this);
         } else {
-            Brigante brigante = new Brigante(gestoreClient, giocatore.getLivello());
-            brigante.interagisci(this); //20%
+            Brigante brigante = new Brigante(gestoreClient, giocatore.getLivello()); //10%
+            brigante.interagisci(this);
         }
 
     }

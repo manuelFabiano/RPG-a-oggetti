@@ -89,7 +89,7 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
                         Document partita;
                         String chiavePartita;
                         do {
-                            manda("Queste sono i tuoi salvataggi:");
+                            manda("Questi sono i tuoi salvataggi:");
                             manda(gestoreDb.stampaPartite(utente));
                             manda("Seleziona una partita da continuare:\nPASS");
                             chiavePartita = ricevi();
@@ -131,7 +131,7 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
             }
         }catch (Exception e){
             e.printStackTrace();
-            manda("Si è verificato un errore durante l'accesso al database");
+            manda("Siamo spiacenti, si è verificato un errore!");
         }
     }
 
@@ -145,7 +145,17 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
 
         int res = gestoreDb.registraUtente(username, password);
         if (res == 1){
-            gestioneLogin();
+            try {
+                this.utente = gestoreDb.login(username, password);
+                if (this.utente != null) {
+                    MenuGioco();
+                } else {
+                    manda("Username o password non validi.");
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                manda("Siamo spiacenti, si è verificato un errore!");
+            }
         }
     }
 

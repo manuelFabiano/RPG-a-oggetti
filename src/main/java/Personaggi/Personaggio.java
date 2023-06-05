@@ -1,13 +1,9 @@
 package Personaggi;
 
-import Server.InterfacciaGestoreClient;
-
 public abstract class Personaggio {
-    private InterfacciaGestoreClient gestoreClient;
     private String nome;
 
-    public Personaggio(InterfacciaGestoreClient gestoreClient) {
-        this.gestoreClient = gestoreClient;
+    public Personaggio() {
         setNome();
     }
 
@@ -19,11 +15,4 @@ public abstract class Personaggio {
         return nome;
     }
 
-    public void setGestoreClient(InterfacciaGestoreClient gestoreClient) {
-        this.gestoreClient = gestoreClient;
-    }
-
-    public InterfacciaGestoreClient getGestoreClient() {
-        return gestoreClient;
-    }
 }

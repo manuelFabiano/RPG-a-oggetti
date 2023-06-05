@@ -2,20 +2,20 @@ package Personaggi;
 
 import Oggetti.Arma;
 import Server.Gioco;
+import Server.InterfacciaGestoreClient;
 
 import java.io.IOException;
 import java.util.Random;
 
 public class Cavaliere extends Umano{
-    public Cavaliere(Giocatore giocatore) {
-        super(giocatore.getGestoreClient(), "Cavaliere");
+    public Cavaliere(InterfacciaGestoreClient gestoreClient, int livelloGiocatore) {
+        super(gestoreClient, "Cavaliere", livelloGiocatore);
         //stats
-        setPuntiVita(generaPuntiVita(giocatore.getLivello(), 10, 18));
-        setPuntiAttacco(generaPuntiAttacco(giocatore.getPuntiAttacco()));
-        setPuntiDifesa(generaPuntiDifesa(giocatore.getPuntiDifesa()));
-        setPuntiAttacco(generaPuntiAgilità(giocatore.getPuntiAgilità()));
+        setPuntiVita(generaPuntiVita(livelloGiocatore, 10, 18));
+
     }
 
+    @Override
     public void interagisci(Gioco gioco) throws IOException {
         while (true) {
             gioco.getGestoreClient().manda("Ti ritrovi davanti a un avamposto. Un cavaliere si pone davanti a te.\n" +
@@ -59,5 +59,10 @@ public class Cavaliere extends Umano{
         int danniBase = 4 + random.nextInt(11);
         return new Arma("Coltello del cavaliere", descrizioneArma , danniBase, "Nessuna");
     }
+
+    @Override
+    public String getFrase() {
+        return getNome() + ": Mi hanno addestrato per uccidere draghi, come pensi di avere chance di sopravvivere contro di me?";
     }
+}
 

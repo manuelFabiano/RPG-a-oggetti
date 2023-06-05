@@ -40,7 +40,7 @@ public class Bosco extends Locations {
                     if (avvicinamento.equals("1")) {
                         getGestoreClient().manda("Trovi dei cadaveri ridotti a poltiglia e vieni attaccato da un orco!");
                         // Inserire orco
-                        Orco orco = new Orco(gioco.getGiocatore());
+                        Orco orco = new Orco(gioco.getGiocatore().getLivello());
                         gioco.Combattimento(orco);
                         break;
                     } else if (avvicinamento.equals("2")) {

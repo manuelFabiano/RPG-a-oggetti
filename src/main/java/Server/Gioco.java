@@ -132,6 +132,7 @@ public class Gioco {
         int danniNemico;
         int dropEsperienza;
         int puntiDifesaOriginali = giocatore.getPuntiDifesa();
+        gestoreClient.manda(nemico.getFrase());
         gestoreClient.manda("Inizia il combattimento con " + nemico.getNome() + "(" + nemico.getTipo() + ")");
         while (giocatore.isVivo() && nemico.isVivo()) {
             gestoreClient.manda("HP del nemico: "+ nemico.getPuntiVita());
@@ -267,32 +268,33 @@ public class Gioco {
         int danni;
         if(attaccante instanceof Giocatore){
             danni = ((Giocatore) attaccante).getArma().getDanniBase() - difensore.getPuntiDifesa();
+            danni += random.nextInt(Math.max(attaccante.getPuntiAttacco(), 1));
         }else {
             // Calcola i danni considerando i punti di attacco e difesa
             danni = attaccante.getPuntiAttacco() - difensore.getPuntiDifesa();
+            danni += random.nextInt(Math.max(attaccante.getPuntiAttacco()/2, 1));
         }
-        if (danni <= 0) {
+        if (danni < 0) {
             danni = 1; // I danni non possono essere negativi o nulli
         }
-        danni += random.nextInt(Math.max(attaccante.getPuntiAttacco(), 1));
 
         return danni;
     }
 
     private void incontroCasuale()throws IOException{
         int nemico = random.nextInt(100)+1;
-        if(nemico <= 25){
-            Orco orco = new Orco(giocatore);
+        if(nemico <= 20){
+            Orco orco = new Orco(giocatore.getLivello()); //20%
             Combattimento(orco);
-        }else if(nemico <= 50){
-            Goblin goblin = new Goblin(giocatore);
+        }else if(nemico <= 60){
+            Goblin goblin = new Goblin(giocatore.getLivello()); //40%
             Combattimento(goblin);
-        }else if(nemico <= 75) {
-            Cavaliere cavaliere = new Cavaliere(giocatore);
+        }else if(nemico <= 80) {
+            Cavaliere cavaliere = new Cavaliere(gestoreClient, giocatore.getLivello()); //20%
             cavaliere.interagisci(this);
         } else {
-            Brigante brigante = new Brigante(giocatore);
-            brigante.interagisci(this, this.getGiocatore());
+            Brigante brigante = new Brigante(gestoreClient, giocatore.getLivello());
+            brigante.interagisci(this); //20%
         }
 
     }

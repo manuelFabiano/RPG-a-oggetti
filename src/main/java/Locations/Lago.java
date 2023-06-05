@@ -40,7 +40,7 @@ public class Lago extends Locations {
                         break;
                     } else if (avvicinamento.equals("2")) {
                         getGestoreClient().manda("Mentre ti avvicini alla riva del lago, incontri un goblin!");
-                        Goblin goblin = new Goblin(gioco.getGiocatore());
+                        Goblin goblin = new Goblin(gioco.getGiocatore().getLivello());
                         gioco.Combattimento(goblin);
                         break;
                     } else {

@@ -4,35 +4,37 @@ public class Orco extends Inumano {
 
     /* Gli orchi saranno più forti in attacco e difesa rispetto agli altri, ma
        avranno una statistica in agilità più bassa*/
-    public Orco(Giocatore giocatore) {
-        super(giocatore.getGestoreClient(), "Orco");
-        setPuntiVita(generaPuntiVita(giocatore.getLivello(), 8, 20));
-        setPuntiAttacco(generaPuntiAttacco(giocatore.getPuntiAttacco()));
-        setPuntiDifesa(generaPuntiDifesa(giocatore.getPuntiDifesa()));
-        setPuntiAgilità(generaPuntiAgilità(giocatore.getPuntiAgilità()));
+    public Orco(int livelloGiocatore) {
+        super("Orco", livelloGiocatore);
+        setPuntiVita(generaPuntiVita(livelloGiocatore, 8, 20));
     }
 
     @Override
-    protected int generaPuntiAttacco(int puntiAttaccoGiocatore) {
-        puntiAttaccoGiocatore += random.nextInt(3); // Aumenta l'attacco degli orchi, perché sono più forti in attacco
-        return super.generaPuntiAttacco(puntiAttaccoGiocatore);
+    protected int generaPuntiAttacco(int livelloGiocatore) {
+        int puntiBase = 4 + (random.nextInt(4)+1); //da 5 a 8 atk
+        return puntiBase + livelloGiocatore;
     }
 
     @Override
-    protected int generaPuntiDifesa(int puntiDifesaGiocatore) {
-        puntiDifesaGiocatore += random.nextInt(2); // Aumenta la difesa degli orchi, perché sono più forti in difesa
-        return super.generaPuntiDifesa(puntiDifesaGiocatore);
+    protected int generaPuntiDifesa(int livelloGiocatore) {
+        int puntiBase = 2 + (random.nextInt(4)+1); //da 3 a 6 dfs
+        return puntiBase + livelloGiocatore;
     }
 
     @Override
-    protected int generaPuntiAgilità(int puntiAgilitàGiocatore) {
-        puntiAgilitàGiocatore -= random.nextInt(7); // Gli orchi sono meno agili
-        return super.generaPuntiAgilità(puntiAgilitàGiocatore);
+    protected int generaPuntiAgilità(int livelloGiocatore) {
+        int puntiBase = 2 + (random.nextInt(4)-2); //da 0 a 4 agl
+        return puntiBase + livelloGiocatore;
     }
 
     @Override
     protected int generaQuantitaDrop() {
         return random.nextInt(5)+1;
+    }
+
+    @Override
+    public String getFrase() {
+        return getNome() + ": Muahahahaha! Ti ridurrò in poltiglia!";
     }
 }
 

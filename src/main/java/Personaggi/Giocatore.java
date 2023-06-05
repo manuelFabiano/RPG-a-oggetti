@@ -9,6 +9,7 @@ import org.bson.Document;
 import java.io.IOException;
 
 public class Giocatore extends PersonaggioCombattente {
+    private final InterfacciaGestoreClient gestoreClient;
     private int livello;
     private int esperienza;
     private int soldi;
@@ -16,19 +17,19 @@ public class Giocatore extends PersonaggioCombattente {
 
     //Costruttore personaggio del giocatore quando si inizia una nuova partita
     public Giocatore(InterfacciaGestoreClient gestoreClient) throws IOException {
-        super(gestoreClient);
+        this.gestoreClient = gestoreClient;
         setMaxPuntiVita(20);
         setPuntiVita(20);
         livello = 1;
         esperienza = 0;
         soldi = 0;
-        arma = new Arma("Spada di Legno","Una normale spada di legno", 2,"Nessuna");
+        arma = new Arma("Spada di Legno","Una normale spada di legno", 5,"Nessuna");
         assegnaPunti(15);
     }
 
     //Continua partita
     public Giocatore(InterfacciaGestoreClient gestoreClient, Document partita){
-        super(gestoreClient);
+        this.gestoreClient = gestoreClient;
         setPuntiVita(partita.getInteger("puntiVita"));
         setMaxPuntiVita(partita.getInteger("maxPuntiVita"));
         setPuntiAttacco(partita.getInteger("puntiAttacco"));
@@ -47,7 +48,7 @@ public class Giocatore extends PersonaggioCombattente {
             setMaxPuntiVita(getMaxPuntiVita()+2);
             setPuntiVita(getPuntiVita()+2);
             livello += 1;
-            getGestoreClient().manda("Sei aumentato di livello!\n");
+            gestoreClient.manda("Sei aumentato di livello!\n");
             assegnaPunti(3);
             //resetto l'exp
             this.esperienza -= 1000;
@@ -64,20 +65,20 @@ public class Giocatore extends PersonaggioCombattente {
 
     private void assegnaPunti(int puntiRimanenti) throws IOException {
         while (puntiRimanenti > 0) {
-            getGestoreClient().manda("Hai " + puntiRimanenti + " punti a disposizione da assegnare alle tue abilità!\n"
+            gestoreClient.manda("Hai " + puntiRimanenti + " punti a disposizione da assegnare alle tue abilità!\n"
                     + "- Attacco\n- Difesa\n- Agilità\n"
                     + "In quale abilità vuoi assegnare i punti? (Attacco, Difesa, Agilità)\nPASS");
 
-            String scelta = getGestoreClient().ricevi().toLowerCase();
+            String scelta = gestoreClient.ricevi().toLowerCase();
 
             switch (scelta) {
                 case "attacco":
-                    getGestoreClient().manda("Quanti punti di Attacco vuoi assegnare?\nPASS");
+                    gestoreClient.manda("Quanti punti di Attacco vuoi assegnare?\nPASS");
 
-                    int puntiAttacco = Integer.parseInt(getGestoreClient().ricevi());
+                    int puntiAttacco = Integer.parseInt(gestoreClient.ricevi());
 
                     if (puntiAttacco < 1 || puntiAttacco > puntiRimanenti) {
-                        getGestoreClient().manda("Puoi assegnare da 1 a " + puntiRimanenti + " punti ad Attacco.");
+                        gestoreClient.manda("Puoi assegnare da 1 a " + puntiRimanenti + " punti ad Attacco.");
                         continue;
                     }
 
@@ -86,12 +87,12 @@ public class Giocatore extends PersonaggioCombattente {
                     break;
 
                 case "difesa":
-                    getGestoreClient().manda("Quanti punti di Difesa vuoi assegnare?\nPASS");
+                    gestoreClient.manda("Quanti punti di Difesa vuoi assegnare?\nPASS");
 
-                    int puntiDifesa = Integer.parseInt(getGestoreClient().ricevi());
+                    int puntiDifesa = Integer.parseInt(gestoreClient.ricevi());
 
                     if (puntiDifesa < 1 || puntiDifesa > puntiRimanenti) {
-                        getGestoreClient().manda("Puoi assegnare da 1 a " + puntiRimanenti + " punti alla Difesa.");
+                        gestoreClient.manda("Puoi assegnare da 1 a " + puntiRimanenti + " punti alla Difesa.");
                         continue;
                     }
 
@@ -100,12 +101,12 @@ public class Giocatore extends PersonaggioCombattente {
                     break;
 
                 case "agilità":
-                    getGestoreClient().manda("Quanti punti di Agilità vuoi assegnare?\nPASS");
+                    gestoreClient.manda("Quanti punti di Agilità vuoi assegnare?\nPASS");
 
-                    int puntiAgilita = Integer.parseInt(getGestoreClient().ricevi());
+                    int puntiAgilita = Integer.parseInt(gestoreClient.ricevi());
 
                     if (puntiAgilita < 1 || puntiAgilita > puntiRimanenti) {
-                        getGestoreClient().manda("Puoi assegnare da 1 a " + puntiRimanenti + " punti all'Agilità.");
+                        gestoreClient.manda("Puoi assegnare da 1 a " + puntiRimanenti + " punti all'Agilità.");
                         continue;
                     }
 
@@ -114,11 +115,11 @@ public class Giocatore extends PersonaggioCombattente {
                     break;
 
                 default:
-                    getGestoreClient().manda("Abilità non valida. Riprova.");
+                    gestoreClient.manda("Abilità non valida. Riprova.");
             }
         }
 
-        getGestoreClient().manda("Hai assegnato i punti correttamente:\n"
+        gestoreClient.manda("Hai assegnato i punti correttamente:\n"
                 + "Attacco: " + getPuntiAttacco() + "\n"
                 + "Difesa: " + getPuntiDifesa() + "\n"
                 + "Agilità: " + getPuntiAgilità());
@@ -126,23 +127,23 @@ public class Giocatore extends PersonaggioCombattente {
 
     public void nuovaArma(Arma arma) throws IOException{
         while (true){
-            getGestoreClient().manda("Hai trovato una nuova arma:");
-            getGestoreClient().manda(arma.getArma());
-            getGestoreClient().manda("\nQuesta è la tua attuale arma:");
-            getGestoreClient().manda(this.arma.getArma());
-            getGestoreClient().manda("\nVuoi equipaggiare l'arma che hai appena trovato?\n" +
+            gestoreClient.manda("Hai trovato una nuova arma:");
+            gestoreClient.manda(arma.getArma());
+            gestoreClient.manda("\nQuesta è la tua attuale arma:");
+            gestoreClient.manda(this.arma.getArma());
+            gestoreClient.manda("\nVuoi equipaggiare l'arma che hai appena trovato?\n" +
                     "1. Si\n" +
                     "2. No\nPASS");
-            String risposta = getGestoreClient().ricevi();
+            String risposta = gestoreClient.ricevi();
             if(risposta.equals("1")){
                 setArma(arma);
-                getGestoreClient().manda("Hai equipaggiato la nuova arma!");
+                gestoreClient.manda("Hai equipaggiato la nuova arma!");
                 break;
             }else if(risposta.equals("2")){
-                getGestoreClient().manda("Hai lasciato a terra la nuova arma...");
+                gestoreClient.manda("Hai lasciato a terra la nuova arma...");
                 break;
             }else{
-                getGestoreClient().manda("Opzione non valida!");
+                gestoreClient.manda("Opzione non valida!");
             }
         }
     }
@@ -150,8 +151,8 @@ public class Giocatore extends PersonaggioCombattente {
     public void mangia(Cibo cibo){
         int nuovaVita = getPuntiVita() + cibo.getPuntiVita();
         setPuntiVita(Math.min(nuovaVita, getMaxPuntiVita()));
-        getGestoreClient().manda("Hai mangiato 1 " + cibo.getNome() + " e hai recuperato "+ cibo.getPuntiVita() +" HP!");
-        getGestoreClient().manda("HP:"+getPuntiVita()+"/"+getMaxPuntiVita());
+        gestoreClient.manda("Hai mangiato 1 " + cibo.getNome() + " e hai recuperato "+ cibo.getPuntiVita() +" HP!");
+        gestoreClient.manda("HP:"+getPuntiVita()+"/"+getMaxPuntiVita());
     }
 
     public Arma getArma() {
@@ -170,4 +171,8 @@ public class Giocatore extends PersonaggioCombattente {
         soldi -= quantita;
     }
     public void aumentaSoldi(int quantita) { soldi += quantita; }
+
+    public InterfacciaGestoreClient getGestoreClient() {
+        return gestoreClient;
+    }
 }

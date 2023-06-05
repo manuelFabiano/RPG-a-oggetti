@@ -1,51 +1,50 @@
 package Personaggi;
 
-import Server.InterfacciaGestoreClient;
-
 import java.util.Random;
 
 public abstract class Nemico extends PersonaggioCombattente {
     private int dropEsperienza;
-    private int dropSoldi;
+    private final int dropSoldi;
     private String dropOggetto;
     private int quantitaDrop;
     private String tipo;
     public Random random = new Random();
 
-    public Nemico(InterfacciaGestoreClient gestoreClient,String tipo) {
-        super(gestoreClient);
+    public Nemico(String tipo, int livelloGiocatore) {
+        super();
         this.dropEsperienza = generaDropEsperienza();
         this.dropSoldi = generaDropSoldi();
         this.dropOggetto = generaDrop();
         this.quantitaDrop = generaQuantitaDrop();
         this.tipo = tipo;
+        //Stats
+        setPuntiAttacco(generaPuntiAttacco(livelloGiocatore));
+        setPuntiDifesa(generaPuntiDifesa(livelloGiocatore));
+        setPuntiAgilità(generaPuntiAgilità(livelloGiocatore));
     }
 
     protected int generaPuntiVita(int livelloGiocatore, int hpMin, int hpMax) {
         // Formula per determinare gli HP dei nemici in base al livello del giocatore
-        //Sfrutta una proporzione di aumento degli HP per ogni livello acquisito dal giocatore e aggiunge un fattore casuale
         // HP minimi dei nemici a livello 1 del giocatore
         // HP massimi dei nemici a livello 1 del giocatore
-        double proporzione = 0.2;  // Proporzione di aumento degli HP per ogni livello
+        int hpBase = hpMin + random.nextInt(hpMax-hpMin);
 
-        int hpBase = hpMin + (int) (proporzione * livelloGiocatore * (hpMax - hpMin));
-        int hpRandom = random.nextInt(hpBase / 2) + 1;  // Aggiunge un fattore casuale ai HP
+        int hpLivello= (random.nextInt(2)+1) * (livelloGiocatore-1); //aggiunge da 1 a 2 hp per il livello del giocaotore a partire dal livello 2
 
-        return hpBase + hpRandom;
+        return hpBase + hpLivello;
     }
 
-    protected int generaPuntiAttacco(int puntiAttaccoGiocatore){
-        int puntiAttaccoRandom = random.nextInt(5) - 2; //genera un numero casuale da -2 a 2
-        return puntiAttaccoGiocatore + puntiAttaccoRandom;
+    protected int generaPuntiAttacco(int livelloGiocatore){
+        int puntiBase = 5 + (random.nextInt(4)-2);
+        return puntiBase + livelloGiocatore;
     }
-    protected int generaPuntiDifesa(int puntiDifesaGiocatore){
-        int puntiDifesaRandom = random.nextInt(5) - 2; //genera un numero casuale da -2 a 2
-        int puntiDifesa = puntiDifesaGiocatore + puntiDifesaRandom;
-        return Math.max(puntiDifesa, 0);
+    protected int generaPuntiDifesa(int livelloGiocatore){
+        int puntiBase = 5 + (random.nextInt(4)-2);
+        return puntiBase + livelloGiocatore;
     }
-    protected int generaPuntiAgilità(int puntiAgilitàGiocatore){
-        int puntiAgilitàRandom = random.nextInt(5) - 2; //genera un numero casuale da -2 a 2
-        return puntiAgilitàGiocatore + puntiAgilitàRandom;
+    protected int generaPuntiAgilità(int livelloGiocatore){
+        int puntiBase = 5 + (random.nextInt(4)-2);
+        return puntiBase + livelloGiocatore;
     }
     protected int generaDropEsperienza(){
         int dropBase = 500;
@@ -114,4 +113,7 @@ public abstract class Nemico extends PersonaggioCombattente {
     public int getDropSoldi() {
         return dropSoldi;
     }
+
+    //Stampa la flase detta dal nemico a inizio combattimento
+    public abstract String getFrase();
 }

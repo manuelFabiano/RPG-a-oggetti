@@ -2,43 +2,46 @@ package Personaggi;
 
 import Oggetti.Oggetto;
 import Server.Gioco;
+import Server.InterfacciaGestoreClient;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.util.*;
 
 
 public class Mercante extends Personaggio {
+    private final InterfacciaGestoreClient gestoreClient;
     private Map<Oggetto, Integer> inventario;
-    private Gioco gioco;
+    private final Gioco gioco;
     Random random = new Random();
 
     public Mercante(Gioco gioco) {
-        super(gioco.getGestoreClient());
+        super();
         this.gioco = gioco;
-        setNome();
         inventario = generaInventarioCasuale();
-        setGestoreClient(gioco.getGestoreClient());
+        gestoreClient = gioco.getGestoreClient();
     }
 
     public void interagisci() throws IOException {
         while(true) {
-            getGestoreClient().manda("Mercante: Benvenuto nel mio negozio! Ecco cosa ho in vendita:");
+            gestoreClient.manda("Mercante "+ getNome() +": Benvenuto nel mio negozio! Ecco cosa ho in vendita:\n");
             for (Map.Entry<Oggetto, Integer> entry : inventario.entrySet()) {
                 Oggetto oggetto = entry.getKey();
                 String nome = oggetto.getNome();
                 int quantita = entry.getValue();
                 int prezzo = oggetto.getPrezzo();
 
-                getGestoreClient().manda(nome + " - Quantità disponibile: " + quantita + " - Prezzo: " + prezzo + " monete");
+                gestoreClient.manda(StringUtils.capitalize(nome) + " - Quantità disponibile: " + quantita + " - Prezzo: " + prezzo + " monete");
             }
 
-            getGestoreClient().manda("Cosa desideri acquistare? Inserisci il nome dell'oggetto o premi invio per uscire.\nPASS");
+            gestoreClient.manda("\nMonete: " + gioco.getGiocatore().getSoldi());
+            gestoreClient.manda("Cosa desideri acquistare? Inserisci il nome dell'oggetto o premi invio per uscire.\nPASS");
 
             // Leggi l'input dell'utente
-            String scelta = getGestoreClient().ricevi();
+            String scelta = gestoreClient.ricevi();
 
             if (scelta.isEmpty()) {
-                getGestoreClient().manda("Mercante: Arrivederci!");
+                gestoreClient.manda("Mercante "+ getNome() +": Arrivederci!");
                 break;
             }
 
@@ -82,9 +85,9 @@ public class Mercante extends Personaggio {
             giocatore.decrementaSoldi(prezzo);
             //tolgo l'oggetto al mercante
             inventario.put(oggetto, quantita - 1);
-            getGestoreClient().manda("Hai acquistato un " + oggetto.getNome());
+            gestoreClient.manda("Hai acquistato un " + oggetto.getNome());
         } else {
-            getGestoreClient().manda("Non hai abbastanza soldi!");
+            gestoreClient.manda("Non hai abbastanza soldi!");
         }
     }
 

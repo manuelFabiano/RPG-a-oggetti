@@ -13,6 +13,7 @@ public class Mercante extends Personaggio {
     Random random = new Random();
 
     public Mercante(Gioco gioco) {
+        super(gioco.getGestoreClient());
         this.gioco = gioco;
         setNome();
         inventario = generaInventarioCasuale();

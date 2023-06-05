@@ -6,18 +6,13 @@ public class Goblin extends Inumano{
     /*I nemici goblin saranno più deboli in attacco e in difesa rispetto agli altri, ma
       avranno una statistica in Agilità più alta, quindi spesso attaccheranno prima */
     public Goblin(Giocatore giocatore) {
-        setTipo("Goblin");
-        setNome();
+        //Il costruttore della superclasse setta tutti i drop randomici, il tipo e il nome
+        super(giocatore.getGestoreClient(), "Goblin");
         //stats
         setPuntiVita(generaPuntiVita(giocatore.getLivello(), 6, 18));
         setPuntiAttacco(generaPuntiAttacco(giocatore.getPuntiAttacco()));
         setPuntiDifesa(generaPuntiDifesa(giocatore.getPuntiDifesa()));
         setPuntiAttacco(generaPuntiAgilità(giocatore.getPuntiAgilità()));
-        //drop esperienza
-        setDropEsperienza(generaDropEsperienza());
-        //drop oggetti
-        setDropOggetto(generaDrop());
-        setQuantitaDrop(random.nextInt(2)+1);
     }
 
     @Override

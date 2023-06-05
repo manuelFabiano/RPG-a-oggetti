@@ -1,14 +1,25 @@
 package Personaggi;
 
+import Server.InterfacciaGestoreClient;
+
 import java.util.Random;
 
 public abstract class Nemico extends PersonaggioCombattente {
     private int dropEsperienza;
+    private int dropSoldi;
     private String dropOggetto;
     private int quantitaDrop;
     private String tipo;
     public Random random = new Random();
 
+    public Nemico(InterfacciaGestoreClient gestoreClient,String tipo) {
+        super(gestoreClient);
+        this.dropEsperienza = generaDropEsperienza();
+        this.dropSoldi = generaDropSoldi();
+        this.dropOggetto = generaDrop();
+        this.quantitaDrop = generaQuantitaDrop();
+        this.tipo = tipo;
+    }
 
     protected int generaPuntiVita(int livelloGiocatore, int hpMin, int hpMax) {
         // Formula per determinare gli HP dei nemici in base al livello del giocatore
@@ -39,6 +50,10 @@ public abstract class Nemico extends PersonaggioCombattente {
     protected int generaDropEsperienza(){
         int dropBase = 500;
         return dropBase + (random.nextInt(501));
+    }
+
+    protected int generaDropSoldi(){
+        return random.nextInt(15)+1;
     }
 
     public int getDropEsperienza() {
@@ -76,6 +91,10 @@ public abstract class Nemico extends PersonaggioCombattente {
         return null;
     }
 
+    protected int generaQuantitaDrop(){
+        return random.nextInt(2)+1;
+    }
+
     public String getDropOggetto() {
         return dropOggetto;
     }
@@ -90,5 +109,9 @@ public abstract class Nemico extends PersonaggioCombattente {
 
     public void setQuantitaDrop(int quantitaDrop) {
         this.quantitaDrop = quantitaDrop;
+    }
+
+    public int getDropSoldi() {
+        return dropSoldi;
     }
 }

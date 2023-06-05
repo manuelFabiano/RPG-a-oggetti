@@ -6,6 +6,11 @@ public abstract class Personaggio {
     private InterfacciaGestoreClient gestoreClient;
     private String nome;
 
+    public Personaggio(InterfacciaGestoreClient gestoreClient) {
+        this.gestoreClient = gestoreClient;
+        setNome();
+    }
+
     public void setNome() {
         this.nome = Nomi.getNomeRandom();
     }

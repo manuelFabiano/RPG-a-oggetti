@@ -1,6 +1,7 @@
 package Locations;
 
 import Oggetti.Arma;
+import Personaggi.Mercante;
 import Personaggi.Orco;
 import Server.Gioco;
 import Server.InterfacciaGestoreClient;
@@ -52,7 +53,8 @@ public class Bosco extends Locations {
                         break;
                     } else if (avvicinamento.equals("3")) {
                         getGestoreClient().manda("Trovi una tenda al cui interno risiede un mercante");
-                        // Inserire mercante
+                        Mercante mercante = new Mercante(gioco);
+                        mercante.interagisci();
                     }else {
                         getGestoreClient().manda("Scelta non valida. Riprova.");
                     }

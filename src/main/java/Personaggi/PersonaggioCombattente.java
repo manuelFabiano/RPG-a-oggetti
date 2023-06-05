@@ -1,5 +1,7 @@
 package Personaggi;
 
+import Server.InterfacciaGestoreClient;
+
 public abstract class PersonaggioCombattente extends Personaggio{
 
     private int maxPuntiVita = 0;
@@ -7,6 +9,10 @@ public abstract class PersonaggioCombattente extends Personaggio{
     private int puntiAttacco = 0;
     private int puntiDifesa = 0;
     private int puntiAgilità = 0;
+
+    public PersonaggioCombattente(InterfacciaGestoreClient gestoreClient) {
+        super(gestoreClient);
+    }
 
 
     public void subisciDanni(int danni){

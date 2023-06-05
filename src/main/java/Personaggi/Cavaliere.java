@@ -8,19 +8,12 @@ import java.util.Random;
 
 public class Cavaliere extends Umano{
     public Cavaliere(Giocatore giocatore) {
-        setTipo("Cavaliere");
-        setNome();
+        super(giocatore.getGestoreClient(), "Cavaliere");
         //stats
         setPuntiVita(generaPuntiVita(giocatore.getLivello(), 10, 18));
         setPuntiAttacco(generaPuntiAttacco(giocatore.getPuntiAttacco()));
         setPuntiDifesa(generaPuntiDifesa(giocatore.getPuntiDifesa()));
         setPuntiAttacco(generaPuntiAgilità(giocatore.getPuntiAgilità()));
-        //drop esperienza
-        setDropEsperienza(generaDropEsperienza());
-        //drop oggetti
-        setDropOggetto(generaDrop());
-        setQuantitaDrop(random.nextInt(2)+1);
-
     }
 
     public void interagisci(Gioco gioco) throws IOException {

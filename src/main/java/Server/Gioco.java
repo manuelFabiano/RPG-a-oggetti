@@ -60,7 +60,7 @@ public class Gioco {
             //logica di gioco:
             tipoIncontro = random.nextInt(100)+1;
             //INCONTRO CASUALE
-            if(tipoIncontro <= 60) {
+            if(tipoIncontro <= 70) {
                 incontroCasuale();
             }
             else if (tipoIncontro <= 90) {
@@ -215,6 +215,10 @@ public class Gioco {
             //drop oggetti
             gestoreClient.manda("Il nemico possedeva "+ nemico.getQuantitaDrop() +" "+ StringUtils.capitalize(nemico.getDropOggetto()));
             gestoreDb.incrementaQuantita(this, nemico.getDropOggetto(), nemico.getQuantitaDrop());
+            sleep();
+            //drop soldi
+            gestoreClient.manda("Il nemico possedeva " + nemico.getDropSoldi() + " monete");
+            giocatore.aumentaSoldi(nemico.getDropSoldi());
             sleep();
             //drop esperienza
             dropEsperienza = nemico.getDropEsperienza();

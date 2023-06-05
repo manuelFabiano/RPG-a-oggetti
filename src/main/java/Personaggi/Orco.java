@@ -5,17 +5,11 @@ public class Orco extends Inumano {
     /* Gli orchi saranno più forti in attacco e difesa rispetto agli altri, ma
        avranno una statistica in agilità più bassa*/
     public Orco(Giocatore giocatore) {
-        setTipo("Orco");
-        setNome();
+        super(giocatore.getGestoreClient(), "Orco");
         setPuntiVita(generaPuntiVita(giocatore.getLivello(), 8, 20));
         setPuntiAttacco(generaPuntiAttacco(giocatore.getPuntiAttacco()));
         setPuntiDifesa(generaPuntiDifesa(giocatore.getPuntiDifesa()));
         setPuntiAgilità(generaPuntiAgilità(giocatore.getPuntiAgilità()));
-        //drop esperienza
-        setDropEsperienza(generaDropEsperienza());
-        //drop oggetti
-        setDropOggetto(generaDrop());
-        setQuantitaDrop(random.nextInt(4)+1);
     }
 
     @Override
@@ -34,6 +28,11 @@ public class Orco extends Inumano {
     protected int generaPuntiAgilità(int puntiAgilitàGiocatore) {
         puntiAgilitàGiocatore -= random.nextInt(7); // Gli orchi sono meno agili
         return super.generaPuntiAgilità(puntiAgilitàGiocatore);
+    }
+
+    @Override
+    protected int generaQuantitaDrop() {
+        return random.nextInt(5)+1;
     }
 }
 

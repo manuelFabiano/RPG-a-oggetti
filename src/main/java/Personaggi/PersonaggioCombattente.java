@@ -7,9 +7,11 @@ public abstract class PersonaggioCombattente extends Personaggio{
     private int puntiAttacco = 0;
     private int puntiDifesa = 0;
     private int puntiAgilità = 0;
+    private String status;
 
     public PersonaggioCombattente() {
         super();
+        status = "";
     }
 
     public void subisciDanni(int danni){
@@ -57,5 +59,13 @@ public abstract class PersonaggioCombattente extends Personaggio{
 
     public void setMaxPuntiVita(int maxPuntiVita) {
         this.maxPuntiVita = maxPuntiVita;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

@@ -145,28 +145,21 @@ public class Gioco {
                     case "1":
                         if (giocatorePrimo) {
                             //Attacca prima il giocatore
-                            danniGiocatore = calcolaDanni(giocatore, nemico);
-                            nemico.subisciDanni(danniGiocatore);
-                            gestoreClient.manda("Hai attaccato il nemico e gli hai inflitto " + danniGiocatore + " danni!");
+                            attacco(giocatore,nemico);
                             //Sleep di 1 secondo.
                             sleep();
                             if(!nemico.isVivo()) break;
                             //Adesso attacca il nemico
-                            danniNemico = calcolaDanni(nemico, giocatore);
-                            giocatore.subisciDanni(danniNemico);
-                            gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
+                            attacco(nemico,giocatore);
                             premiPerContinuare();
                         }else{
                             //Attacca prima il nemico
-                            danniNemico = calcolaDanni(nemico, giocatore);
-                            giocatore.subisciDanni(danniNemico);
-                            gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
+                            attacco(nemico,giocatore);
                             //Sleep di 1 secondo.
                             sleep();
                             if(!giocatore.isVivo()) break;
-                            danniGiocatore = calcolaDanni(giocatore, nemico);
-                            nemico.subisciDanni(danniGiocatore);
-                            gestoreClient.manda("Hai attaccato il nemico e gli hai inflitto " + danniGiocatore + " danni!");
+                            //Adesso attacca il giocatore
+                            attacco(giocatore,nemico);
                             premiPerContinuare();
                         }
                         break;
@@ -175,9 +168,7 @@ public class Gioco {
                         //Aumento la difesa
                         giocatore.setPuntiDifesa((giocatore.getPuntiDifesa())*2);
                         gestoreClient.manda("Ti metti in posizione di difesa!.");
-                        danniNemico = calcolaDanni(nemico, giocatore);
-                        giocatore.subisciDanni(danniNemico);
-                        gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
+                        attacco(nemico,giocatore);
                         premiPerContinuare();
                         break;
                     case "3":
@@ -186,9 +177,7 @@ public class Gioco {
                             gestoreClient.manda("Complimenti! Sei riuscito a schivare l'attacco del nemico");
                             premiPerContinuare();
                         }else{
-                            danniNemico = calcolaDanni(nemico, giocatore);
-                            giocatore.subisciDanni(danniNemico);
-                            gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
+                            attacco(nemico,giocatore);
                             premiPerContinuare();
                         }
                         break;
@@ -197,9 +186,7 @@ public class Gioco {
                         apriInventario();
                         sleep();
                         //Il nemico attacca
-                        danniNemico = calcolaDanni(nemico, giocatore);
-                        giocatore.subisciDanni(danniNemico);
-                        gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
+                        attacco(nemico,giocatore);
                         premiPerContinuare();
                         break;
                     case "5":
@@ -246,18 +233,22 @@ public class Gioco {
         return random.nextDouble() < probabilitaSchivata;
     }
     private String inputCombattimento() throws IOException{
-        gestoreClient.manda("Cosa vuoi fare?\n" +
-                "Scegli un'opzione:\n" +
-                "1. Attacca\n" +
-                "2. Difenditi\n" +
-                "3. Schiva\n" +
-                "4. Inventario\n" +
-                "5. Scappa\n" +
-                "PASS");
         int input = -1;
         while (input < 0 || input > 5) {
-            input = Integer.parseInt(gestoreClient.ricevi());
-            if (input < 0 || input > 5) {
+            gestoreClient.manda("Cosa vuoi fare?\n" +
+                    "Scegli un'opzione:\n" +
+                    "1. Attacca\n" +
+                    "2. Difenditi\n" +
+                    "3. Schiva\n" +
+                    "4. Inventario\n" +
+                    "5. Scappa\n" +
+                    "PASS");
+            try {
+                input = Integer.parseInt(gestoreClient.ricevi());
+                if (input < 0 || input > 5) {
+                    gestoreClient.manda("Scelta non valida.");
+                }
+            }catch (NumberFormatException e){
                 gestoreClient.manda("Scelta non valida.");
             }
         }
@@ -267,8 +258,19 @@ public class Gioco {
     private int calcolaDanni(PersonaggioCombattente attaccante, PersonaggioCombattente difensore) {
         int danni;
         if(attaccante instanceof Giocatore){
-            danni = ((Giocatore) attaccante).getArma().getDanniBase() - difensore.getPuntiDifesa();
+            //Danni se ad attaccare è il giocatore
+            danni = giocatore.getArma().getDanniBase() - difensore.getPuntiDifesa();
             danni += random.nextInt(Math.max(attaccante.getPuntiAttacco(), 1));
+            //Abilità speciali
+            //Fuoco
+            if(giocatore.getArma().getAbilita().equals("Fuoco") && (random.nextInt(10) >= 6)){
+                difensore.setStatus("Scottato");
+            }
+            //Ghiaccio
+            if(giocatore.getArma().getAbilita().equals("Ghiaccio") && (random.nextInt(10) >= 6)){
+                difensore.setStatus("Congelato");
+                System.out.println("Congelato:" + difensore.getStatus());
+            }
         }else {
             // Calcola i danni considerando i punti di attacco e difesa
             danni = attaccante.getPuntiAttacco() - difensore.getPuntiDifesa();
@@ -279,6 +281,28 @@ public class Gioco {
         }
 
         return danni;
+    }
+
+    private void attacco(PersonaggioCombattente attaccante, PersonaggioCombattente difensore){
+        if (attaccante instanceof Giocatore){
+            int danniGiocatore = calcolaDanni(attaccante, difensore);
+            difensore.subisciDanni(danniGiocatore);
+            gestoreClient.manda("Hai attaccato il nemico e gli hai inflitto " + danniGiocatore + " danni!");
+            if(difensore.isVivo() && difensore.getStatus().equals("Scottato")){
+                int dannoScottatura = random.nextInt(4)+1;
+                gestoreClient.manda("Il nemico subisce un danno di " + dannoScottatura + " HP per scottatura!");
+                difensore.subisciDanni(dannoScottatura);
+            }
+        }else{
+            if(attaccante.getStatus().equals("Congelato") && random.nextInt(10)>=6){
+                System.out.println("test");
+                gestoreClient.manda("Il nemico è congelato e non può attaccarti");
+            }else {
+                int danniNemico = calcolaDanni(attaccante, difensore);
+                difensore.subisciDanni(danniNemico);
+                gestoreClient.manda("Il nemico ti ha attaccato ed inflitto " + danniNemico + " danni!");
+            }
+        }
     }
 
     private void incontroCasuale()throws IOException{
@@ -306,12 +330,12 @@ public class Gioco {
     }
 
     private void luogoCasuale()throws IOException{
-        int luogo = random.nextInt(11);
-        if (luogo > 6) {
+        int luogo = random.nextInt(100)+1;
+        if (luogo <= 40) {
             Bosco bosco = new Bosco(gestoreClient);
             bosco.esplora(this);
             premiPerContinuare();
-        }else if(luogo > 2){
+        }else if(luogo <= 80){
             Lago lago = new Lago(gestoreClient);
             lago.esplora(this);
             premiPerContinuare();

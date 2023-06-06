@@ -56,7 +56,7 @@ public class Cavaliere extends Umano{
     private Arma creaArma(){
         String descrizioneArma = "Un coltello con uno strano simbolo impresso sul manico";
         Random random = new Random();
-        int danniBase = 4 + random.nextInt(11);
+        int danniBase = 4 + random.nextInt(7);
         return new Arma("Coltello del cavaliere", descrizioneArma , danniBase, "Nessuna");
     }
 

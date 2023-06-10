@@ -1,12 +1,12 @@
 package Server;
 
 import org.bson.Document;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.List;
 
 public class GestoreClient implements Runnable, InterfacciaGestoreClient {
     private final Socket clientSocket;
@@ -101,7 +101,8 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
                         gioco.loop();
                         break;
                     case "3":
-                        //classifica
+                        List<Document> classifica = gestoreDb.generaClassifica();
+                        manda(gestoreDb.stampaClassifica(classifica));
                         break;
                     case "4":
                         exit = true;

@@ -68,4 +68,8 @@ public abstract class PersonaggioCombattente extends Personaggio{
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public void stampaStats(){
+        System.out.println(getPuntiAttacco()+ " " + getPuntiDifesa() + " " +  getPuntiAgilità());
+    }
 }

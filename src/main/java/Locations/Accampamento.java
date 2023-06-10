@@ -18,6 +18,7 @@ public class Accampamento extends Locations {
 
     @Override
     public void esplora(Gioco gioco) throws IOException {
+        label:
         while (true) {
             getGestoreClient().manda(getDescrizione());
             getGestoreClient().manda("1. Dormi");
@@ -25,24 +26,26 @@ public class Accampamento extends Locations {
             getGestoreClient().manda("3. Allontanati\nPASS");
 
             String scelta = getGestoreClient().ricevi();
-            if (scelta.equals("1")) {
-                // Recupera tutta la vita del giocatore
-                gioco.getGiocatore().setPuntiVita(gioco.getGiocatore().getMaxPuntiVita());
-                getGestoreClient().manda("Hai dormito e recuperato tutta la vita!");
-                break;
-            } else if (scelta.equals("2")) {
-                // Esplorazione dell'area circostante
-                getGestoreClient().manda("Esplori l'area circostante dell'accampamento...");
-                gioco.sleep();
-                getGestoreClient().manda("Con grande sorpresa trovi una spada dietro a una grande quercia.");
-                Arma spada = creaArma();
-                gioco.getGiocatore().nuovaArma(spada);
-                break;
-            } else if (scelta.equals("3")) {
-                getGestoreClient().manda("Ti allontani dall'accampamento e continui la tua avventura.");
-                break;
-            } else {
-                getGestoreClient().manda("Scelta non valida. Riprova.");
+            switch (scelta) {
+                case "1":
+                    // Recupera tutta la vita del giocatore
+                    gioco.getGiocatore().setPuntiVita(gioco.getGiocatore().getMaxPuntiVita());
+                    getGestoreClient().manda("Hai dormito e recuperato tutta la vita!");
+                    break label;
+                case "2":
+                    // Esplorazione dell'area circostante
+                    getGestoreClient().manda("Esplori l'area circostante dell'accampamento...");
+                    gioco.sleep();
+                    getGestoreClient().manda("Con grande sorpresa trovi una spada dietro a una grande quercia.");
+                    Arma spada = creaArma();
+                    gioco.getGiocatore().nuovaArma(spada);
+                    break label;
+                case "3":
+                    getGestoreClient().manda("Ti allontani dall'accampamento e continui la tua avventura.");
+                    break label;
+                default:
+                    getGestoreClient().manda("Scelta non valida. Riprova.");
+                    break;
             }
         }
     }

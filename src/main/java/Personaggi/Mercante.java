@@ -4,7 +4,6 @@ import Oggetti.Oggetto;
 import Server.Gioco;
 import Server.InterfacciaGestoreClient;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.IOException;
 import java.util.*;
 
@@ -54,8 +53,7 @@ public class Mercante extends Personaggio {
 
     private Map<Oggetto, Integer> generaInventarioCasuale() {
         Map<Oggetto, Integer> inventario = new HashMap<>();
-        String[] nomiOggetti = {"mela", "banana", "pane", "pollo", "cioccolato", "manzo"};
-
+        String[] nomiOggetti = {"mela", "banana", "pane", "pollo", "cioccolato", "manzo", "pozione curativa", "superpozione curativa", "pozione di attacco", "pozione di difesa", "pozione di fuoco"};
 
         // Genera un numero casuale di oggetti presenti nell'inventario
         int numOggetti = random.nextInt(nomiOggetti.length) + 1;
@@ -119,6 +117,16 @@ public class Mercante extends Personaggio {
                 return 6 + random.nextInt(6)+1;
             case "cioccolato":
                 return 2 + random.nextInt(4)+1;
+            case "pozione curativa":
+                return 8 + random.nextInt(6)+1;
+            case "superpozione curativa":
+                return 14 + random.nextInt(6)+1;
+            case "pozione di attacco":
+                return 7 + random.nextInt(6)+1;
+            case "pozione di difesa":
+                return 6 + random.nextInt(7)+1;
+            case "pozione di fuoco":
+                return 10 + random.nextInt(6)+1;
             default:
                 return 0;
         }

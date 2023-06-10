@@ -11,7 +11,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -83,12 +87,26 @@ public class TerminalClientGUI extends Application {
         connectToServer();
     }
 
+    private static Element caricaXML(String uri)throws Exception {
+        // Carico il file di configurazione XML
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document document = builder.parse(uri);
+
+        // Ottengo l'elemento radice
+        Element root = document.getDocumentElement();
+
+        // Ottengo l'elemento "server"
+        return  (Element) root.getElementsByTagName("server").item(0);
+    }
 
     private void connectToServer() {
-        String serverAddress = "localhost"; // Indirizzo IP del server
-        int portNumber = 1234; // Porta del server
-
         try {
+            Element serverElement = caricaXML("clientConfig.xml");
+
+            String serverAddress = serverElement.getElementsByTagName("address").item(0).getTextContent(); // Indirizzo IP del server
+            int portNumber = Integer.parseInt(serverElement.getElementsByTagName("port").item(0).getTextContent()); // Porta del server
+
             Socket socket = new Socket(serverAddress, portNumber);
             output = new PrintWriter(socket.getOutputStream(), true);
 
@@ -109,7 +127,7 @@ public class TerminalClientGUI extends Application {
             }).start();
 
             System.out.println("Connessione al server riuscita...");
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

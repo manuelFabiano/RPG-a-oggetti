@@ -1,17 +1,18 @@
 package Server;
 
 import Oggetti.Cibo;
+import Oggetti.Pozione;
 import Personaggi.Giocatore;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.IndexOptions;
 import org.bson.Document;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 
@@ -169,12 +170,17 @@ public class GestoreDb {
     }
 
     private Document creaInventarioVuoto(){
-        Document inventario = new Document("mela", creaCibo("Mela", "Una mela rossa" , 2,0))
-                .append("pane", creaCibo("Pane", "Una fetta di pane croccante", 3, 0))
-                .append("cioccolato", creaCibo("Cioccolato", "Una barretta di cioccolato", 4, 0))
-                .append("banana", creaCibo("Banana", "Una banana gialla", 3, 0))
-                .append("pollo", creaCibo("Pollo", "Un pezzo di pollo arrosto", 5, 0))
-                .append("manzo", creaCibo("Manzo", "Un gustoso pezzo di manzo", 6, 0));
+        Document inventario = new Document("mela", creaCibo("Mela", "Una mela rossa" , 2))
+                .append("pane", creaCibo("Pane", "Una fetta di pane croccante", 3))
+                .append("cioccolato", creaCibo("Cioccolato", "Una barretta di cioccolato", 4))
+                .append("banana", creaCibo("Banana", "Una banana gialla", 3))
+                .append("pollo", creaCibo("Pollo", "Un pezzo di pollo arrosto", 5))
+                .append("manzo", creaCibo("Manzo", "Un gustoso pezzo di manzo", 6))
+                .append("pozione curativa", creaPozione("Pozione curativa", "Una pozione di colore rosso", "Cura", 10))
+                .append("superpozione curativa", creaPozione("Superpozione curativa", "Una grande pozione di colore rosso", "Cura", 20))
+                .append("pozione di attacco", creaPozione("Pozione di attacco", "Una pozione di colore verde", "Attacco", 10))
+                .append("pozione di difesa", creaPozione("Pozione di difesa", "Una pozione di colore blu", "Difesa", 10))
+                .append("pozione di fuoco", creaPozione("Pozione di fuoco", "Una pozione infuocata", "Fuoco", 0));
         return inventario;
     }
 
@@ -212,17 +218,79 @@ public class GestoreDb {
     }
 
 
-    private Document creaCibo(String nome, String descrizione, int puntiVita, int quantita ){
+    private Document creaCibo(String nome, String descrizione, int puntiVita ){
         Document oggetto = new Document("nome", nome)
                 .append("descrizione", descrizione)
                 .append("puntiVita", puntiVita)
-                .append("quantita", quantita);
+                .append("quantita", 0);
+        return oggetto;
+    }
+    private Document creaPozione(String nome, String descrizione, String tipo, int punti ){
+        Document oggetto = new Document("nome", nome)
+                .append("descrizione", descrizione)
+                .append("tipo", tipo)
+                .append("punti", punti)
+                .append("quantita", 0);
         return oggetto;
     }
 
     public Cibo getCibo(Document inventario, String chiaveCibo){
         Document documentCibo = (Document) inventario.get(chiaveCibo);
         return new Cibo(documentCibo.getString("nome"), documentCibo.getString("descrizione"), documentCibo.getInteger("puntiVita"));
+    }
+    public Pozione getPozione(Document inventario, String chiavePozione){
+        Document documentPozione = (Document) inventario.get(chiavePozione);
+        return new Pozione(documentPozione.getString("nome"), documentPozione.getString("descrizione"), documentPozione.getString("tipo"), documentPozione.getInteger("punti"));
+    }
+
+    //METODI PER LA CLASSIFICA:
+    public List<Document> generaClassifica() {
+        List<Document> classifica = new ArrayList<>();
+
+        // Ottieni tutti gli utenti dalla collezione
+        MongoCursor<Document> cursor = playerscollection.find().iterator();
+        while (cursor.hasNext()) {
+            Document document = cursor.next();
+            String username = document.getString("username");
+
+            // Scansiona tutte le partite dell'utente
+            for (String key : document.keySet()) {
+                if (key.startsWith("partita")) {
+                    Document partitaObject = document.get(key, Document.class);
+                    int round = partitaObject.getInteger("roundCorrente");
+                    int livello = partitaObject.getInteger("livello");
+
+                    // Aggiungi la partita alla classifica
+                    Document partita = new Document();
+                    partita.append("username", username)
+                            .append("round", round)
+                            .append("livello", livello);
+                    classifica.add(partita);
+                }
+            }
+        }
+
+        // Ordina la classifica in base al round (in ordine decrescente)
+        classifica.sort(Comparator.comparingInt((Document p) -> p.getInteger("round")).reversed());
+
+        return classifica;
+    }
+
+    public String stampaClassifica(List<Document> classifica){
+        StringBuilder classificaStampabile = new StringBuilder();
+        for (int i = 0; i < classifica.size(); i++) {
+            Document partita = classifica.get(i);
+            String username = partita.getString("username");
+            int round = partita.getInteger("round");
+            int livello = partita.getInteger("livello");
+
+            String posizioneString = "Posizione " + (i + 1) + ": ";
+            String partitaString = username + " - Round: " + round + ", Livello: " + livello;
+
+            classificaStampabile.append(posizioneString).append(partitaString).append("\n");
+        }
+
+        return classificaStampabile.toString();
     }
 
 }

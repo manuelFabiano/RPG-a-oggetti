@@ -1,0 +1,6 @@
+<configuration>
+    <server>
+        <address>localhost</address>
+        <port>1234</port>
+    </server>
+</configuration>

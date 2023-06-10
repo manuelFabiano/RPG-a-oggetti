@@ -7,6 +7,7 @@ public class Strega extends Inumano{
     public Strega(int livelloGiocatore) {
         // Il costruttore della superclasse setta tutti i drop randomici, il tipo e il nome
         super("Strega", livelloGiocatore);
+        setQuantitaDrop(1);
         // HP
         setPuntiVita(generaPuntiVita(livelloGiocatore, 10, 20));
     }
@@ -27,6 +28,24 @@ public class Strega extends Inumano{
     protected int generaPuntiAgilità(int livelloGiocatore) {
         int puntiBase = random.nextInt(4)+2; // da 2 a 5 agl
         return puntiBase + livelloGiocatore;
+    }
+
+    @Override
+    protected String generaDrop() {
+        int numeroRandom = random.nextInt(5);
+        switch (numeroRandom) {
+            case 0:
+                return "pozione curativa";
+            case 1:
+                return "superpozione curativa";
+            case 2:
+                return "pozione di attacco";
+            case 3:
+                return "pozione di difesa";
+            case 4:
+                return "pozione di fuoco";
+        }
+        return null;
     }
 
     @Override

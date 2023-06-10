@@ -1,0 +1,10 @@
+<configuration>
+    <database>
+        <url>mongodb://localhost:27017</url>
+        <databaseName>RPG</databaseName>
+        <collectionName>Players</collectionName>
+    </database>
+    <server>
+        <port>1234</port>
+    </server>
+</configuration>

@@ -4,6 +4,7 @@ import Locations.Accampamento;
 import Locations.Bosco;
 import Locations.Lago;
 import Oggetti.Cibo;
+import Oggetti.Pozione;
 import Personaggi.*;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
@@ -86,7 +87,7 @@ public class Gioco {
                     break;
                 }
                 else if (risposta.equals("2")) {
-                    apriInventario();
+                    apriInventario(false);
                 }else if (risposta.equals("3")){
                     esci = true;
                     break;
@@ -99,11 +100,16 @@ public class Gioco {
         }
     }
 
-    private void apriInventario()throws IOException {
+
+    /**
+     * type == true se il metodo viene chiamato durante il combattimento, altrimenti type == false
+     */
+    private void apriInventario(boolean type)throws IOException {
         // Ottieni gli oggetti con quantità maggiore di 0
         String inventario;
         while (true) {
-            inventario = gestoreDb.getInventarioStampabile(gestoreDb.getInventario(utente, chiavePartita));
+            Document documentInventario = gestoreDb.getInventario(utente, chiavePartita);
+            inventario = gestoreDb.getInventarioStampabile(documentInventario);
             if (!inventario.isEmpty()) {
                 gestoreClient.manda("Oggetti nell'inventario:");
                 gestoreClient.manda(inventario);
@@ -112,8 +118,13 @@ public class Gioco {
                 System.out.println(risposta);
                 if (risposta.isEmpty())
                     break;
-                if (gestoreDb.decrementaQuantita(this, risposta.toLowerCase())) {
-                    Cibo cibo = gestoreDb.getCibo(gestoreDb.getInventario(utente, chiavePartita), risposta.toLowerCase());
+                if(type && risposta.contains("pozione") && gestoreDb.decrementaQuantita(this, risposta.toLowerCase())){
+                    Pozione pozione = gestoreDb.getPozione(documentInventario, risposta.toLowerCase());
+                    giocatore.bevi(pozione);
+                } else if (risposta.contains("pozione")) {
+                    gestoreClient.manda("Puoi usare le pozioni solo durante il combattimento!");
+                }else if (gestoreDb.decrementaQuantita(this, risposta.toLowerCase())) {
+                    Cibo cibo = gestoreDb.getCibo(documentInventario, risposta.toLowerCase());
                     giocatore.mangia(cibo);
                 }
             } else {
@@ -128,9 +139,8 @@ public class Gioco {
     //Metodo che gestisce i combattimenti
     public void Combattimento(Nemico nemico) throws IOException{
         String clientMessage;
-        int danniGiocatore;
-        int danniNemico;
         int dropEsperienza;
+        int puntiAttaccoOriginali = giocatore.getPuntiAttacco();
         int puntiDifesaOriginali = giocatore.getPuntiDifesa();
         gestoreClient.manda(nemico.getFrase());
         gestoreClient.manda("Inizia il combattimento con " + nemico.getNome() + "(" + nemico.getTipo() + ")");
@@ -183,7 +193,7 @@ public class Gioco {
                         break;
                     case "4":
                         //Apri inventario
-                        apriInventario();
+                        apriInventario(true);
                         sleep();
                         //Il nemico attacca
                         attacco(nemico,giocatore);
@@ -198,6 +208,8 @@ public class Gioco {
             }
         }
         if (giocatore.isVivo()) {
+            giocatore.setStatus("Nessuno");
+            giocatore.setPuntiAttacco(puntiAttaccoOriginali);
             giocatore.setPuntiDifesa(puntiDifesaOriginali);
             gestoreClient.manda("Complimenti! Hai vinto il combattimento!");
             //drop oggetti
@@ -263,7 +275,7 @@ public class Gioco {
             danni += random.nextInt(Math.max(attaccante.getPuntiAttacco(), 1));
             //Abilità speciali
             //Fuoco
-            if(giocatore.getArma().getAbilita().equals("Fuoco") && (random.nextInt(10) >= 6)){
+            if((giocatore.getArma().getAbilita().equals("Fuoco") || giocatore.getStatus().equals("Infuocato")) && (random.nextInt(10) >= 6)){
                 difensore.setStatus("Scottato");
             }
             //Ghiaccio
@@ -295,7 +307,6 @@ public class Gioco {
             }
         }else{
             if(attaccante.getStatus().equals("Congelato") && random.nextInt(10)>=6){
-                System.out.println("test");
                 gestoreClient.manda("Il nemico è congelato e non può attaccarti");
             }else {
                 int danniNemico = calcolaDanni(attaccante, difensore);
@@ -309,15 +320,19 @@ public class Gioco {
         int nemico = random.nextInt(100)+1;
         if(nemico <= 20){
             Orco orco = new Orco(giocatore.getLivello()); //20%
+            orco.stampaStats();
             Combattimento(orco);
         }else if(nemico <= 60) {
             Goblin goblin = new Goblin(giocatore.getLivello()); //40%
+            goblin.stampaStats();
             Combattimento(goblin);
         }else if (nemico <= 75 ){
             Strega strega = new Strega(giocatore.getLivello()); //15%
+            strega.stampaStats();
             Combattimento(strega);
         }else if (nemico <= 80){
             Drago drago = new Drago(giocatore.getLivello()); //5%
+            drago.stampaStats();
             Combattimento(drago);
         }else if(nemico <= 90) {
             Cavaliere cavaliere = new Cavaliere(gestoreClient, giocatore.getLivello()); //10%

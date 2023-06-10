@@ -3,6 +3,7 @@ package Personaggi;
 
 import Oggetti.Arma;
 import Oggetti.Cibo;
+import Oggetti.Pozione;
 import Server.InterfacciaGestoreClient;
 import org.bson.Document;
 
@@ -153,6 +154,32 @@ public class Giocatore extends PersonaggioCombattente {
         setPuntiVita(Math.min(nuovaVita, getMaxPuntiVita()));
         gestoreClient.manda("Hai mangiato 1 " + cibo.getNome() + " e hai recuperato "+ cibo.getPuntiVita() +" HP!");
         gestoreClient.manda("HP:"+getPuntiVita()+"/"+getMaxPuntiVita());
+    }
+
+    public void bevi(Pozione pozione){
+        String tipo = pozione.getTipo();
+        switch (tipo) {
+            case "Cura":
+                int nuovaVita = getPuntiVita() + pozione.getPunti();
+                setPuntiVita(Math.min(nuovaVita, getMaxPuntiVita()));
+                gestoreClient.manda("Hai bevuto 1 " + pozione.getNome() + " e hai recuperato " + pozione.getPunti() + " HP!");
+                gestoreClient.manda("HP:" + getPuntiVita() + "/" + getMaxPuntiVita());
+                break;
+            case "Attacco":
+                int nuovoAttacco = getPuntiAttacco() + pozione.getPunti();
+                setPuntiAttacco(nuovoAttacco);
+                gestoreClient.manda("Hai bevuto 1 " + pozione.getNome() + " e adesso hai " + nuovoAttacco + " punti attacco!");
+                break;
+            case "Difesa":
+                int nuovaDifesa = getPuntiDifesa() + pozione.getPunti();
+                setPuntiDifesa(nuovaDifesa);
+                gestoreClient.manda("Hai bevuto 1 " + pozione.getNome() + " e adesso hai " + nuovaDifesa + " punti difesa!");
+                break;
+            case "Fuoco":
+                setStatus("Infuocato");
+                gestoreClient.manda("Hai bevuto 1 " + pozione.getNome() + " e adesso il fuoco ti ricopre tutto il corpo!");
+                break;
+        }
     }
 
     public Arma getArma() {

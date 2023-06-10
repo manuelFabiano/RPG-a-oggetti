@@ -6,6 +6,6 @@ import java.io.IOException;
 // che sono gli unici che le altre classi devono poter utilizzare
 public interface InterfacciaGestoreClient {
 
-    public void manda(String string);
-    public String ricevi()throws IOException;
+    void manda(String string);
+    String ricevi()throws IOException;
 }

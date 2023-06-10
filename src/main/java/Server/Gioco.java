@@ -2,6 +2,7 @@ package Server;
 
 import Locations.Accampamento;
 import Locations.Bosco;
+import Locations.Caverna;
 import Locations.Lago;
 import Oggetti.Cibo;
 import Personaggi.*;
@@ -331,17 +332,21 @@ public class Gioco {
 
     private void luogoCasuale()throws IOException{
         int luogo = random.nextInt(100)+1;
-        if (luogo <= 40) {
+        if (luogo <= 25) {
             Bosco bosco = new Bosco(gestoreClient);
             bosco.esplora(this);
             premiPerContinuare();
-        }else if(luogo <= 80){
+        }else if(luogo <= 50){
             Lago lago = new Lago(gestoreClient);
             lago.esplora(this);
             premiPerContinuare();
-        }else{
+        }else if(luogo <= 75){
             Accampamento accampamento = new Accampamento(gestoreClient);
             accampamento.esplora(this);
+            premiPerContinuare();
+        } else{
+            Caverna caverna = new Caverna(gestoreClient);
+            caverna.esplora(this);
             premiPerContinuare();
         }
     }

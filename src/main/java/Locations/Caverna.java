@@ -72,7 +72,10 @@ public class Caverna extends Locations {
     }
 
     @Override
-    protected Arma creaArma() {
-        return null;
+    protected Arma creaArma(){
+        String descrizioneArma = "Un'ascia affilata, forgiata con maestria e incisa con simboli runici.";
+        Random random = new Random();
+        int danniBase = 5 + random.nextInt(11);
+        return new Arma("Ascia affilata", descrizioneArma , danniBase, "Ghiaccio");
     }
 }

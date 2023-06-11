@@ -1,9 +1,7 @@
 package Locations;
 
 import Oggetti.Arma;
-import Personaggi.Cavaliere;
-import Personaggi.Mercante;
-import Personaggi.Orco;
+import Personaggi.Goblin;
 import Personaggi.Strega;
 import Server.Gioco;
 import Server.InterfacciaGestoreClient;
@@ -33,6 +31,7 @@ public class Caverna extends Locations {
 
             String scelta = getGestoreClient().ricevi();
             if (scelta.equals("1")) {
+                label:
                 while (true) {
                     getGestoreClient().manda("Dove vuoi andare?");
                     getGestoreClient().manda("1. Verso destra");
@@ -40,25 +39,25 @@ public class Caverna extends Locations {
                     getGestoreClient().manda("3. Verso sinistra\nPASS");
 
                     String avvicinamento = getGestoreClient().ricevi();
-                    if (avvicinamento.equals("1")) {
-                        getGestoreClient().manda("Scorgi degli altarini e all'improvviso vieni attaccato da una strega!");
-                        // Inserire orco
-                        Strega strega = new Strega(gioco.getGiocatore().getLivello());
-                        gioco.Combattimento(strega);
-                        break;
-                    } else if (avvicinamento.equals("2")) {
-                        getGestoreClient().manda("Prosegui verso una luce trovando e incontri qualcuno");
-                        Cavaliere cavaliere = new Cavaliere(gioco.getGestoreClient(), gioco.getGiocatore().getLivello());
-                        cavaliere.interagisci(gioco);
-
-                        break;
-                    } else if (avvicinamento.equals("3")) {
-                        getGestoreClient().manda("Trovi un forziere con dentro un'ascia!");
-                        Arma ascia = creaArma();
-                        gioco.getGiocatore().nuovaArma(ascia);
-                        break;
-                    }else {
-                        getGestoreClient().manda("Scelta non valida. Riprova.");
+                    switch (avvicinamento) {
+                        case "1":
+                            getGestoreClient().manda("Scorgi degli altarini e all'improvviso vieni attaccato da una strega!");
+                            Strega strega = new Strega(gioco.getGiocatore().getLivello());
+                            gioco.Combattimento(strega);
+                            break label;
+                        case "2":
+                            getGestoreClient().manda("Prosegui verso una luce incontrando un goblin intento a scavare");
+                            Goblin goblin = new Goblin(gioco.getGiocatore().getLivello());
+                            gioco.Combattimento(goblin);
+                            break label;
+                        case "3":
+                            getGestoreClient().manda("Trovi un forziere con dentro un'ascia!");
+                            Arma ascia = creaArma();
+                            gioco.getGiocatore().nuovaArma(ascia);
+                            break label;
+                        default:
+                            getGestoreClient().manda("Scelta non valida. Riprova.");
+                            break;
                     }
                 }
                 break;
@@ -74,7 +73,6 @@ public class Caverna extends Locations {
     @Override
     protected Arma creaArma(){
         String descrizioneArma = "Un'ascia affilata, forgiata con maestria e incisa con simboli runici.";
-        Random random = new Random();
         int danniBase = 5 + random.nextInt(11);
         return new Arma("Ascia affilata", descrizioneArma , danniBase, "Ghiaccio");
     }

@@ -74,13 +74,14 @@ public class Gioco {
             }
 
             if(!giocatore.isVivo()) {
+                gestoreDb.salvaPartita(utente, giocatore, this);
                 break;
             }
-            gestoreClient.manda("Round "+ roundCorrente +" terminato");
+            gestoreClient.manda("\nRound "+ roundCorrente +" terminato");
             String risposta;
             label:
             while(true){
-                gestoreClient.manda("Cosa vuoi fare?");
+                gestoreClient.manda("\nCosa vuoi fare?");
                 gestoreClient.manda("1. Continua\n" +
                         "2. Apri inventario\n" +
                         "3. Esci\nPASS");
@@ -148,7 +149,7 @@ public class Gioco {
         gestoreClient.manda(nemico.getFrase());
         gestoreClient.manda("Inizia il combattimento con " + nemico.getNome() + "(" + nemico.getTipo() + ")");
         while (giocatore.isVivo() && nemico.isVivo()) {
-            gestoreClient.manda("HP del nemico: "+ nemico.getPuntiVita());
+            gestoreClient.manda("\nHP del nemico: "+ nemico.getPuntiVita());
             gestoreClient.manda("HP: "+ giocatore.getPuntiVita()+"/"+ giocatore.getMaxPuntiVita());
             //Chiedo all'utente cosa vuole fare
             clientMessage = inputCombattimento();
@@ -256,8 +257,7 @@ public class Gioco {
     private String inputCombattimento() throws IOException{
         int input = -1;
         while (input < 0 || input > 5) {
-            gestoreClient.manda("Cosa vuoi fare?\n" +
-                    "Scegli un'opzione:\n" +
+            gestoreClient.manda("\nCosa vuoi fare?\n" +
                     "1. Attacca\n" +
                     "2. Difenditi\n" +
                     "3. Schiva\n" +

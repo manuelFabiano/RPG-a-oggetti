@@ -80,21 +80,23 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
                         gioco.loop();
                         break;
                     case "2":
-                        Document partita;
+                        Document partita = null;
                         String chiavePartita;
                         do {
                             manda("Questi sono i tuoi salvataggi:");
                             manda(gestoreDb.stampaPartite(utente));
-                            manda("Seleziona una partita da continuare:\nPASS");
+                            manda("Seleziona una partita da continuare(premi invio per tornare indietro):\nPASS");
                             chiavePartita = ricevi();
-                            if (chiavePartita == null)
-                                throw new IOException("Client disconnesso");
+                            if (chiavePartita.isEmpty())
+                                break;
                             partita = gestoreDb.trovaPartita(utente, chiavePartita);
                             if (partita == null)
                                 manda("La partita che hai inserito non è valida");
                         } while (partita == null);
-                        gioco = new Gioco(this, gestoreDb, utente, partita, chiavePartita);
-                        gioco.loop();
+                        if(partita != null) {
+                            gioco = new Gioco(this, gestoreDb, utente, partita, chiavePartita);
+                            gioco.loop();
+                        }
                         break;
                     case "3":
                         List<Document> classifica = gestoreDb.generaClassifica();
@@ -147,7 +149,7 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
 
     private void stampaMenuLogin(){
         manda("Benvenuto a RPG a OGGETTI!\n" +
-                "Scegli un'opzione:\n" +
+                "Cosa vuoi fare?\n" +
                 "1. Accedi\n" +
                 "2. Registrati\n" +
                 "3. Esci\n"+
@@ -156,7 +158,6 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
 
     private void stampaMenuGioco(){
         manda("Cosa vuoi fare?\n" +
-                "Scegli un'opzione:\n" +
                 "1. Nuova partita\n" +
                 "2. Continua\n" +
                 "3. Classifica\n" +

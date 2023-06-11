@@ -1,7 +1,10 @@
 package Personaggi;
 
+/**
+ * PersonaggioCombattente è una sottoclasse di Personaggio e rappresenta tutti i personaggi che possono combattere, quindi
+ * possiede tutte le statistiche utili al combattimento
+ */
 public abstract class PersonaggioCombattente extends Personaggio{
-
     private int maxPuntiVita = 0;
     private int puntiVita = 0;
     private int puntiAttacco = 0;

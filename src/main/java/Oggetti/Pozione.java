@@ -9,11 +9,9 @@ public class Pozione extends Oggetto{
         this.tipo = tipo;
         this.punti = punti;
     }
-
     public String getTipo() {
         return tipo;
     }
-
     public int getPunti() {
         return punti;
     }

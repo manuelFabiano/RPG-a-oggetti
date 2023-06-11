@@ -26,8 +26,14 @@ public abstract class Locations {
         this.descrizione = descrizione;
     }
 
+    /**
+     * Ogni sottoclasse di Locations deve implemetare esplora, che gestisce l'interazione dell'utente con la location
+     */
     public abstract void esplora(Gioco gioco) throws IOException;
 
+    /**
+     * creArma restituisce un oggetto Arma (sempre diversa) trovabile all'interno della location che implementa il metodo
+     */
     protected abstract Arma creaArma();
 }
 

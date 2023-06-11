@@ -77,20 +77,22 @@ public class Gioco {
             }
             gestoreClient.manda("Round "+ roundCorrente +" terminato");
             String risposta;
+            label:
             while(true){
                 gestoreClient.manda("Cosa vuoi fare?");
                 gestoreClient.manda("1. Continua\n" +
                         "2. Apri inventario\n" +
                         "3. Esci\nPASS");
                 risposta = gestoreClient.ricevi();
-                if(risposta.equals("1")) {
-                    break;
-                }
-                else if (risposta.equals("2")) {
-                    apriInventario(false);
-                }else if (risposta.equals("3")){
-                    esci = true;
-                    break;
+                switch (risposta) {
+                    case "1":
+                        break label;
+                    case "2":
+                        apriInventario(false);
+                        break;
+                    case "3":
+                        esci = true;
+                        break label;
                 }
             }
 
@@ -148,64 +150,64 @@ public class Gioco {
             gestoreClient.manda("HP del nemico: "+ nemico.getPuntiVita());
             gestoreClient.manda("HP: "+ giocatore.getPuntiVita()+"/"+ giocatore.getMaxPuntiVita());
             //Chiedo all'utente cosa vuole fare
-            if(((clientMessage = inputCombattimento()) != null)){
-                System.out.println("Messaggio dal client: " + clientMessage);
-                boolean giocatorePrimo = giocatore.getPuntiAgilità() > nemico.getPuntiAgilità();
-                switch (clientMessage) {
-                    case "1":
-                        if (giocatorePrimo) {
-                            //Attacca prima il giocatore
-                            attacco(giocatore,nemico);
-                            //Sleep di 1 secondo.
-                            sleep();
-                            if(!nemico.isVivo()) break;
-                            //Adesso attacca il nemico
-                            attacco(nemico,giocatore);
-                            premiPerContinuare();
-                        }else{
-                            //Attacca prima il nemico
-                            attacco(nemico,giocatore);
-                            //Sleep di 1 secondo.
-                            sleep();
-                            if(!giocatore.isVivo()) break;
-                            //Adesso attacca il giocatore
-                            attacco(giocatore,nemico);
-                            premiPerContinuare();
-                        }
-                        break;
-                    case "2":
-                        //Il giocatore ha scelto di aumentare la propria difesa, raddoppiando i punti di difesa
-                        //Aumento la difesa
-                        giocatore.setPuntiDifesa((giocatore.getPuntiDifesa())*2);
-                        gestoreClient.manda("Ti metti in posizione di difesa!.");
-                        attacco(nemico,giocatore);
-                        premiPerContinuare();
-                        break;
-                    case "3":
-                        //Il giocatore ha scelto di tentare di schivare l'attacco nemico
-                        if(calcolaSchivata(giocatore.getPuntiAgilità())){
-                            gestoreClient.manda("Complimenti! Sei riuscito a schivare l'attacco del nemico");
-                            premiPerContinuare();
-                        }else{
-                            attacco(nemico,giocatore);
-                            premiPerContinuare();
-                        }
-                        break;
-                    case "4":
-                        //Apri inventario
-                        apriInventario(true);
+            clientMessage = inputCombattimento();
+            boolean giocatorePrimo = giocatore.getPuntiAgilità() > nemico.getPuntiAgilità();
+            switch (clientMessage) {
+                case "1":
+                    if (giocatorePrimo) {
+                        //Attacca prima il giocatore
+                        attacco(giocatore,nemico);
+                        //Sleep di 1 secondo.
                         sleep();
-                        //Il nemico attacca
+                        if(!nemico.isVivo()) break;
+                        //Adesso attacca il nemico
+                        attacco(nemico,giocatore);
+                    }else{
+                        //Attacca prima il nemico
+                        attacco(nemico,giocatore);
+                        //Sleep di 1 secondo.
+                        sleep();
+                        if(!giocatore.isVivo()) break;
+                        //Adesso attacca il giocatore
+                        attacco(giocatore,nemico);
+                    }
+                    premiPerContinuare();
+                    break;
+                case "2":
+                    //Il giocatore ha scelto di aumentare la propria difesa, raddoppiando i punti di difesa
+                    //Aumento la difesa
+                    giocatore.setPuntiDifesa((giocatore.getPuntiDifesa())*2);
+                    gestoreClient.manda("Ti metti in posizione di difesa!.");
+                    attacco(nemico,giocatore);
+                    premiPerContinuare();
+                    break;
+                case "3":
+                    //Il giocatore ha scelto di tentare di schivare l'attacco nemico
+                    if(calcolaSchivata(giocatore.getPuntiAgilità())){
+                        gestoreClient.manda("Complimenti! Sei riuscito a schivare l'attacco del nemico");
+                    }else{
+                        attacco(nemico,giocatore);
+                    }
+                    premiPerContinuare();
+                    break;
+                case "4":
+                    //Apri inventario
+                    apriInventario(true);
+                    sleep();
+                    //Il nemico attacca
+                    attacco(nemico,giocatore);
+                    premiPerContinuare();
+                    break;
+                case "5":
+                    if(calcolaFuga(giocatore.getPuntiAgilità())){
+                        gestoreClient.manda("Sei riuscito a fuggire dal combattimento.");
+                        return; // Termina il metodo e il combattimento
+                    }else{
                         attacco(nemico,giocatore);
                         premiPerContinuare();
                         break;
-                    case "5":
-                        gestoreClient.manda("Il giocatore fugge dal combattimento.");
-                        return; // Termina il metodo e il combattimento
-
+                    }
                 }
-
-            }
         }
         if (giocatore.isVivo()) {
             giocatore.setStatus("Nessuno");
@@ -226,10 +228,9 @@ public class Gioco {
             sleep();
             giocatore.aumentaEsperienza(dropEsperienza);
         } else {
-            gestoreClient.manda("Sei morto, GAME OVER!");
+            gestoreClient.manda("Sei morto, GAME OVER!\n\n");
         }
     }
-
 
     public void sleep(){
         try {
@@ -244,6 +245,13 @@ public class Gioco {
         double probabilitaSchivata = puntiAgilità * 0.1; // 10% di probabilità di schivata per ogni punto di agilità
         return random.nextDouble() < probabilitaSchivata;
     }
+
+    private boolean calcolaFuga(int puntiAgilità) {
+        Random random = new Random();
+        double probabilitaSchivata = puntiAgilità * 0.025; // 2.5% di probabilità di schivata per ogni punto di agilità
+        return random.nextDouble() < probabilitaSchivata;
+    }
+
     private String inputCombattimento() throws IOException{
         int input = -1;
         while (input < 0 || input > 5) {

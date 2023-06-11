@@ -17,24 +17,28 @@ import java.util.Map;
 
 
 public class GestoreDb {
-    private final MongoClient client;
-    private final MongoDatabase database;
-    private final MongoCollection<Document> playerscollection;
+    private MongoCollection<Document> playerscollection;
 
     public GestoreDb(String uri, String databaseName, String collectionName) {
-        client = MongoClients.create(uri);
-        database = client.getDatabase(databaseName);
-        playerscollection = database.getCollection(collectionName);
-        // Crea un'indicizzazione unica sul campo "username"
-        IndexOptions indexOptions = new IndexOptions().unique(true);
-        playerscollection.createIndex(new Document("username", 1), indexOptions);
-        System.out.println("Connessione al database effettuata.");
+        try {
+            MongoClient client = MongoClients.create(uri);
+            MongoDatabase database = client.getDatabase(databaseName);
+            playerscollection = database.getCollection(collectionName);
+
+            // Crea un'indicizzazione unica sul campo "username"
+            IndexOptions indexOptions = new IndexOptions().unique(true);
+            playerscollection.createIndex(new Document("username", 1), indexOptions);
+
+            System.out.println("Connessione al database effettuata.");
+        } catch (MongoException e) {
+            System.err.println("Errore durante la connessione al database: " + e.getMessage());
+        }
     }
+
 
     public int registraUtente(String username, String password) {
         Document doc = new Document("username", username)
                 .append("password", password);
-
         try {
             playerscollection.insertOne(doc);
             System.out.println("Utente inserito nel database.");
@@ -50,7 +54,7 @@ public class GestoreDb {
         }
     }
 
-    public Document login(String username, String password) throws Exception{
+    public Document login(String username, String password){
         Document utente = playerscollection.find(Filters.eq("username", username)).first();
 
         if (utente != null && utente.getString("password").equals(password)) {
@@ -117,9 +121,6 @@ public class GestoreDb {
         playerscollection.updateOne(filtro, aggiornamento);
         //Aggiorno utente
         gioco.setUtente(aggiornaUtente(utente));
-        String documentoJSON = gioco.getUtente().toJson();
-        String documentoFormattato = documentoJSON.toString();
-        System.out.println(documentoFormattato);
     }
 
 
@@ -130,7 +131,7 @@ public class GestoreDb {
             if (chiave.contains("partita")) {
                 Document partita = utente.get(chiave, Document.class);
                 if(partita.getInteger("puntiVita")>0)
-                    result.append(chiave + ": round " + partita.getInteger("roundCorrente") + " - livello " + partita.getInteger("livello") + "\n" );
+                    result.append(chiave).append(": round ").append(partita.getInteger("roundCorrente")).append(" - livello ").append(partita.getInteger("livello")).append("\n");
             }
         }
         return result.toString();
@@ -164,13 +165,9 @@ public class GestoreDb {
         return sb.toString();
     }
 
-    public void disconnetti() {
-        client.close();
-        System.out.println("Connessione al database chiusa.");
-    }
 
     private Document creaInventarioVuoto(){
-        Document inventario = new Document("mela", creaCibo("Mela", "Una mela rossa" , 2))
+        return new Document("mela", creaCibo("Mela", "Una mela rossa" , 2))
                 .append("pane", creaCibo("Pane", "Una fetta di pane croccante", 3))
                 .append("cioccolato", creaCibo("Cioccolato", "Una barretta di cioccolato", 4))
                 .append("banana", creaCibo("Banana", "Una banana gialla", 3))
@@ -181,7 +178,6 @@ public class GestoreDb {
                 .append("pozione di attacco", creaPozione("Pozione di attacco", "Una pozione di colore verde", "Attacco", 10))
                 .append("pozione di difesa", creaPozione("Pozione di difesa", "Una pozione di colore blu", "Difesa", 10))
                 .append("pozione di fuoco", creaPozione("Pozione di fuoco", "Una pozione infuocata", "Fuoco", 0));
-        return inventario;
     }
 
     public void incrementaQuantita(Gioco gioco, String chiaveOggetto, int incremento) {
@@ -213,25 +209,22 @@ public class GestoreDb {
     }
 
     public Document aggiornaUtente(Document utente){
-        Document aggiornamento = playerscollection.find(Filters.eq("_id", utente.getObjectId("_id"))).first();
-        return aggiornamento;
+        return playerscollection.find(Filters.eq("_id", utente.getObjectId("_id"))).first();
     }
 
 
     private Document creaCibo(String nome, String descrizione, int puntiVita ){
-        Document oggetto = new Document("nome", nome)
+        return new Document("nome", nome)
                 .append("descrizione", descrizione)
                 .append("puntiVita", puntiVita)
                 .append("quantita", 0);
-        return oggetto;
     }
     private Document creaPozione(String nome, String descrizione, String tipo, int punti ){
-        Document oggetto = new Document("nome", nome)
+        return new Document("nome", nome)
                 .append("descrizione", descrizione)
                 .append("tipo", tipo)
                 .append("punti", punti)
                 .append("quantita", 0);
-        return oggetto;
     }
 
     public Cibo getCibo(Document inventario, String chiaveCibo){
@@ -248,9 +241,7 @@ public class GestoreDb {
         List<Document> classifica = new ArrayList<>();
 
         // Ottieni tutti gli utenti dalla collezione
-        MongoCursor<Document> cursor = playerscollection.find().iterator();
-        while (cursor.hasNext()) {
-            Document document = cursor.next();
+        for (Document document : playerscollection.find()) {
             String username = document.getString("username");
 
             // Scansiona tutte le partite dell'utente

@@ -10,7 +10,7 @@ import java.util.*;
 
 public class Mercante extends Personaggio {
     private final InterfacciaGestoreClient gestoreClient;
-    private Map<Oggetto, Integer> inventario;
+    private final Map<Oggetto, Integer> inventario;
     private final Gioco gioco;
     Random random = new Random();
 

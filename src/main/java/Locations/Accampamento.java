@@ -16,6 +16,7 @@ public class Accampamento extends Locations {
         super.setGestoreClient(gestoreClient);
     }
 
+
     @Override
     public void esplora(Gioco gioco) throws IOException {
         label:

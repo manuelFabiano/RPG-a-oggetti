@@ -27,12 +27,11 @@ public class TerminalClientGUI extends Application {
 
     private PrintWriter output;
     private TextArea outputArea;
-
     private Label hpLabel;
     private Label levelLabel;
     private Label roundLabel;
 
-    private Semaphore inputSemaphore = new Semaphore(0);
+    private final Semaphore inputSemaphore = new Semaphore(0);
 
     @Override
     public void start(Stage primaryStage) {
@@ -63,7 +62,7 @@ public class TerminalClientGUI extends Application {
         labelsBox.setSpacing(10);
 
         VBox vbox = new VBox(labelsBox, outputArea,  inputField);
-        vbox.setVgrow(outputArea, Priority.ALWAYS);
+        VBox.setVgrow(outputArea, Priority.ALWAYS);
 
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(10));
@@ -87,11 +86,11 @@ public class TerminalClientGUI extends Application {
         connectToServer();
     }
 
-    private static Element caricaXML(String uri)throws Exception {
+    private static Element caricaXML()throws Exception {
         // Carico il file di configurazione XML
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
-        Document document = builder.parse(uri);
+        Document document = builder.parse("clientConfig.xml");
 
         // Ottengo l'elemento radice
         Element root = document.getDocumentElement();
@@ -102,27 +101,31 @@ public class TerminalClientGUI extends Application {
 
     private void connectToServer() {
         try {
-            Element serverElement = caricaXML("clientConfig.xml");
+            Element serverElement = caricaXML();
 
             String serverAddress = serverElement.getElementsByTagName("address").item(0).getTextContent(); // Indirizzo IP del server
             int portNumber = Integer.parseInt(serverElement.getElementsByTagName("port").item(0).getTextContent()); // Porta del server
 
             Socket socket = new Socket(serverAddress, portNumber);
             output = new PrintWriter(socket.getOutputStream(), true);
-
             BufferedReader input = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             new Thread(() -> {
                 try {
                     String serverMessage;
                     while ((serverMessage = input.readLine()) != null) {
                         if (serverMessage.equals("PASS")) {
-                            inputSemaphore.release(); // Rilascia il semaforo per consentire l'invio dell'input
+                            inputSemaphore.release();
+                        } else if (serverMessage.equals("CLOSE")) {
+                            closeConnection();
+                            break; // Esci dal ciclo
                         } else {
                             updateOutputArea(serverMessage);
                         }
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
+                }finally {
+                    closeConnection();
                 }
             }).start();
 
@@ -171,6 +174,7 @@ public class TerminalClientGUI extends Application {
 
     private void closeConnection() {
         output.close();
+        Platform.exit();
     }
 
     public static void main(String[] args) {

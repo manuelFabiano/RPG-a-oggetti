@@ -12,11 +12,11 @@ public class Cavaliere extends Umano{
         super(gestoreClient, "Cavaliere", livelloGiocatore);
         //stats
         setPuntiVita(generaPuntiVita(livelloGiocatore, 10, 18));
-
     }
 
     @Override
     public void interagisci(Gioco gioco) throws IOException {
+        label:
         while (true) {
             gioco.getGestoreClient().manda("Ti ritrovi davanti a un avamposto. Un cavaliere si pone davanti a te.\n" +
                     "Cavaliere: Benvenuto, viandante! Dove ti stai dirigendo?\n");
@@ -26,29 +26,31 @@ public class Cavaliere extends Umano{
             gioco.getGestoreClient().manda("3. Non sono affari tuoi\nPASS");
 
             String scelta = gioco.getGestoreClient().ricevi();
-            if (scelta.equals("1")) {
-                gioco.getGestoreClient().manda("Cavaliere: Non avere una meta precisa può essere avventuroso.\n" +
-                        "Ma fa attenzione, il pericolo è sempre dietro l'angolo! Sai come difenderti?\n" +
-                        "Tieni, potrebbe tornarti utile");
-                gioco.sleep();
-                gioco.getGestoreClient().manda("Il cavaliere ti dona un coltello!");
-                Arma coltello = creaArma();
-                gioco.getGiocatore().nuovaArma(coltello);
-                break;
-            } else if (scelta.equals("2")) {
-                gioco.getGestoreClient().manda("Cavaliere: Beh, sei stato molto fortunato ad avermi incontrato!\n" +
-                        "Ecco a te...");
-                gioco.sleep();
-                gioco.getGestoreClient().manda("Il cavaliere ti dona un pezzo di carne!");
-                gioco.getGestoreDb().incrementaQuantita(gioco, "manzo", 1);
-                break;
-            } else if (scelta.equals("3")) {
-                gioco.getGestoreClient().manda("Cavaliere: Che modo è questo di rispondermi, ti pentirai di avermi incontrato!");
-                //inizia il combattimento
-                gioco.Combattimento(this);
-                break;
-            } else {
-                gioco.getGestoreClient().manda("Scelta non valida. Riprova.");
+            switch (scelta) {
+                case "1":
+                    gioco.getGestoreClient().manda("Cavaliere: Non avere una meta precisa può essere avventuroso.\n" +
+                            "Ma fa attenzione, il pericolo è sempre dietro l'angolo! Sai come difenderti?\n" +
+                            "Tieni, potrebbe tornarti utile");
+                    gioco.sleep();
+                    gioco.getGestoreClient().manda("Il cavaliere ti dona un coltello!");
+                    Arma coltello = creaArma();
+                    gioco.getGiocatore().nuovaArma(coltello);
+                    break label;
+                case "2":
+                    gioco.getGestoreClient().manda("Cavaliere: Beh, sei stato molto fortunato ad avermi incontrato!\n" +
+                            "Ecco a te...");
+                    gioco.sleep();
+                    gioco.getGestoreClient().manda("Il cavaliere ti dona un pezzo di carne!");
+                    gioco.getGestoreDb().incrementaQuantita(gioco, "manzo", 1);
+                    break label;
+                case "3":
+                    gioco.getGestoreClient().manda("Cavaliere: Che modo è questo di rispondermi, ti pentirai di avermi incontrato!");
+                    //inizia il combattimento
+                    gioco.Combattimento(this);
+                    break label;
+                default:
+                    gioco.getGestoreClient().manda("Scelta non valida. Riprova.");
+                    break;
             }
         }
     }

@@ -30,6 +30,7 @@ public class Bosco extends Locations {
 
             String scelta = getGestoreClient().ricevi();
             if (scelta.equals("1")) {
+                label:
                 while (true) {
                     getGestoreClient().manda("Dove vuoi andare?");
                     getGestoreClient().manda("1. Verso destra");
@@ -37,27 +38,29 @@ public class Bosco extends Locations {
                     getGestoreClient().manda("3. Verso sinistra\nPASS");
 
                     String avvicinamento = getGestoreClient().ricevi();
-                    if (avvicinamento.equals("1")) {
-                        getGestoreClient().manda("Trovi dei cadaveri ridotti a poltiglia e vieni attaccato da un orco!");
-                        // Inserire orco
-                        Orco orco = new Orco(gioco.getGiocatore().getLivello());
-                        gioco.Combattimento(orco);
-                        break;
-                    } else if (avvicinamento.equals("2")) {
-                        getGestoreClient().manda("Prosegui verso una luce trovando l'uscita del bosco!");
-                        int mele = random.nextInt(3)+1;
-                        getGestoreClient().manda("Camminando verso l'uscita hai raccolto " + mele + " Mele!");
-                        gioco.getGestoreDb().incrementaQuantita(gioco, "mela", mele);
+                    switch (avvicinamento) {
+                        case "1":
+                            getGestoreClient().manda("Trovi dei cadaveri ridotti a poltiglia e vieni attaccato da un orco!");
+                            // Inserire orco
+                            Orco orco = new Orco(gioco.getGiocatore().getLivello());
+                            gioco.Combattimento(orco);
+                            break label;
+                        case "2":
+                            getGestoreClient().manda("Prosegui verso una luce trovando l'uscita del bosco!");
+                            int mele = random.nextInt(3) + 1;
+                            getGestoreClient().manda("Camminando verso l'uscita hai raccolto " + mele + " Mele!");
+                            gioco.getGestoreDb().incrementaQuantita(gioco, "mela", mele);
 
 
-                        break;
-                    } else if (avvicinamento.equals("3")) {
-                        getGestoreClient().manda("Trovi una tenda al cui interno risiede un mercante");
-                        Mercante mercante = new Mercante(gioco);
-                        mercante.interagisci();
-                        break;
-                    }else {
-                        getGestoreClient().manda("Scelta non valida. Riprova.");
+                            break label;
+                        case "3":
+                            getGestoreClient().manda("Trovi una tenda al cui interno risiede un mercante");
+                            Mercante mercante = new Mercante(gioco);
+                            mercante.interagisci();
+                            break label;
+                        default:
+                            getGestoreClient().manda("Scelta non valida. Riprova.");
+                            break;
                     }
                 }
                 break;

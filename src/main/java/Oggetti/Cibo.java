@@ -7,7 +7,6 @@ public class Cibo extends Oggetto{
         super(nome, descrizione);
         this.puntiVita = puntiVita;
     }
-
     public int getPuntiVita() {
         return puntiVita;
     }

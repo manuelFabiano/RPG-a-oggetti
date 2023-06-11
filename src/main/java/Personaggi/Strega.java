@@ -32,20 +32,15 @@ public class Strega extends Inumano{
 
     @Override
     protected String generaDrop() {
-        int numeroRandom = random.nextInt(5);
-        switch (numeroRandom) {
-            case 0:
-                return "pozione curativa";
-            case 1:
-                return "superpozione curativa";
-            case 2:
-                return "pozione di attacco";
-            case 3:
-                return "pozione di difesa";
-            case 4:
-                return "pozione di fuoco";
-        }
-        return null;
+        String[] opzioni = {
+                "pozione curativa",
+                "superpozione curativa",
+                "pozione di attacco",
+                "pozione di difesa",
+                "pozione di fuoco"
+        };
+        int indiceCasuale = random.nextInt(opzioni.length);
+        return opzioni[indiceCasuale];
     }
 
     @Override

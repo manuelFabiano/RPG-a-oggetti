@@ -19,17 +19,18 @@ public class Server {
             caricaXML("config.xml");
             GestoreDb gestoreDb = new GestoreDb(url, databaseName, collectionName);
 
-            ServerSocket serverSocket = new ServerSocket(port);
-            System.out.println("Server avviato. In attesa di connessioni...");
+            try (ServerSocket serverSocket = new ServerSocket(port)) {
+                System.out.println("Server avviato. In attesa di connessioni...");
 
-            while (true) {
-                Socket clientSocket = serverSocket.accept();
-                System.out.println("Nuova connessione da: " + clientSocket.getInetAddress());
+                while (true) {
+                    Socket clientSocket = serverSocket.accept();
+                    System.out.println("Nuova connessione da: " + clientSocket.getInetAddress());
 
-                // Crea un nuovo thread per gestire la connessione del client
-                GestoreClient gestoreClient = new GestoreClient(clientSocket, gestoreDb);
-                Thread thread = new Thread(gestoreClient);
-                thread.start();
+                    // Crea un nuovo thread per gestire la connessione del client
+                    GestoreClient gestoreClient = new GestoreClient(clientSocket, gestoreDb);
+                    Thread thread = new Thread(gestoreClient);
+                    thread.start();
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -16,7 +16,9 @@ public class Giocatore extends PersonaggioCombattente {
     private int soldi;
     private Arma arma;
 
-    //Costruttore personaggio del giocatore quando si inizia una nuova partita
+    /**
+     * Costruttore personaggio del giocatore quando si inizia una nuova partita
+     */
     public Giocatore(InterfacciaGestoreClient gestoreClient) throws IOException {
         this.gestoreClient = gestoreClient;
         setMaxPuntiVita(20);
@@ -28,7 +30,9 @@ public class Giocatore extends PersonaggioCombattente {
         assegnaPunti(15);
     }
 
-    //Continua partita
+    /**
+     * Costruttore personaggio del giocatore quando si continua una vecchia partita
+     */
     public Giocatore(InterfacciaGestoreClient gestoreClient, Document partita){
         this.gestoreClient = gestoreClient;
         setPuntiVita(partita.getInteger("puntiVita"));

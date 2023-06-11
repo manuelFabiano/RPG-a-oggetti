@@ -1,6 +1,7 @@
 package Server;
 
 import org.bson.Document;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -34,40 +35,33 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
             while(!exit) {
                 stampaMenuLogin();
                 // Logica di gestione della comunicazione con il client
-                if((clientMessage = ricevi()) != null){
-                    System.out.println("Messaggio dal client: " + clientMessage);
-                    switch (clientMessage) {
-                        case "1":{
-                            gestioneLogin();
-                            exit = true;
-                            break; }
-                        case "2": {
-                            gestioneRegister();
-                            exit = true;
-                            break;
-                        }
-                        case "3":{
-                            exit = true;
-                            break;
-                        }
-                        default:
-                            break;
+                clientMessage = ricevi();
+                switch (clientMessage) {
+                    case "1":
+                        gestioneLogin();
+                        break;
+                    case "2":
+                        gestioneRegister();
+                        break;
+                    case "3":
+                        exit = true;
+                        break;
+                    default:
+                        break;
                     }
-                }
-
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }finally {
+        } finally {
             try {
                 // Chiudi le risorse
                 input.close();
                 output.close();
                 clientSocket.close();
+                System.out.println("Connessione conclusa con " + clientSocket.getInetAddress());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Connessione conclusa");
         }
     }
 
@@ -78,7 +72,7 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
         Gioco gioco;
         while(!exit) {
             stampaMenuGioco();
-            if((clientMessage = ricevi()) != null) {
+            clientMessage = ricevi();
                 System.out.println("Messaggio dal client: " + clientMessage);
                 switch (clientMessage) {
                     case "1":
@@ -93,6 +87,8 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
                             manda(gestoreDb.stampaPartite(utente));
                             manda("Seleziona una partita da continuare:\nPASS");
                             chiavePartita = ricevi();
+                            if (chiavePartita == null)
+                                throw new IOException("Client disconnesso");
                             partita = gestoreDb.trovaPartita(utente, chiavePartita);
                             if (partita == null)
                                 manda("La partita che hai inserito non è valida");
@@ -110,7 +106,6 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
                     default:
                         break;
                 }
-            }
             //aggiorno utente
             utente = gestoreDb.aggiornaUtente(utente);
         }
@@ -123,16 +118,11 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
         manda("Inserisci la tua password:\nPASS");
         String password = ricevi();
         System.out.println(password);
-        try {
-            this.utente = gestoreDb.login(username, password);
-            if (this.utente != null) {
-                MenuGioco();
-            } else {
-                manda("Username o password non validi.");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            manda("Siamo spiacenti, si è verificato un errore!");
+        this.utente = gestoreDb.login(username, password);
+        if (this.utente != null) {
+            MenuGioco();
+        } else {
+            manda("Username o password non validi.");
         }
     }
 
@@ -146,17 +136,12 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
 
         int res = gestoreDb.registraUtente(username, password);
         if (res == 1){
-            try {
-                this.utente = gestoreDb.login(username, password);
-                if (this.utente != null) {
-                    MenuGioco();
-                } else {
-                    manda("Username o password non validi.");
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-                manda("Siamo spiacenti, si è verificato un errore!");
-            }
+            this.utente = gestoreDb.login(username, password);
+            MenuGioco();
+        } else if (res == 2) {
+            manda("Siamo spiacenti, esiste già un utente con questo username!");
+        } else {
+            manda("Si è verificato un errore");
         }
     }
 
@@ -184,7 +169,10 @@ public class GestoreClient implements Runnable, InterfacciaGestoreClient {
     }
     @Override
     public String ricevi()throws IOException{
-        return input.readLine();
+        String clientInput = input.readLine();
+        if (clientInput == null)
+            throw new IOException("Client disconnesso");
+        else return clientInput;
     }
 
 

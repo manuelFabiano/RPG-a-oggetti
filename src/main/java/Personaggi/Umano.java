@@ -7,7 +7,7 @@ import java.io.IOException;
 
 public abstract class Umano extends Nemico{
 
-    private InterfacciaGestoreClient gestoreClient;
+    private final InterfacciaGestoreClient gestoreClient;
 
     public Umano(InterfacciaGestoreClient gestoreClient, String tipo, int livelloGiocatore) {
         super(tipo, livelloGiocatore);

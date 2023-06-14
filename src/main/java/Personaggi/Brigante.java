@@ -43,12 +43,11 @@ public class Brigante extends Umano{
                             gioco.getGiocatore().decrementaSoldi(monete);
                             gioco.sleep();
                             getGestoreClient().manda("Brigante: hai fatto la scelta giusta, arrivederci!");
-                            break;
                         }else{
                             getGestoreClient().manda("Ma non hai niente, sei più povero di me!\n");
                             gioco.Combattimento(this);
-                            break;
                         }
+                        break;
                     }else{
                         getGestoreClient().manda("Scelta non valida!");
                     }

@@ -1,3 +1,5 @@
+package Client;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -23,7 +25,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.concurrent.Semaphore;
 
-public class TerminalClientGUI extends Application {
+public class GUI extends Application {
 
     private PrintWriter output;
     private TextArea outputArea;
@@ -73,9 +75,9 @@ public class TerminalClientGUI extends Application {
         hpLabel.getStyleClass().add("status-label");
         levelLabel.getStyleClass().add("status-label");
         roundLabel.getStyleClass().add("status-label");
+        outputArea.setStyle("-fx-font-size: 18px;");
 
-        // Applica stili CSS alla scena
-        scene.getStylesheets().add("styles.css");
+
 
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest(event -> closeConnection());

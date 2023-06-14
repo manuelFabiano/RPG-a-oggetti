@@ -8,5 +8,4 @@ public interface InterfacciaGestoreClient {
 
     void manda(String string);
     String ricevi()throws IOException;
-
 }

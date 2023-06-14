@@ -31,7 +31,7 @@ public class Gioco {
         random = new Random();
         this.giocatore = new Giocatore(gestoreClient);
         this.utente = utente;
-        chiavePartita = gestoreDb.nuovaPartita(utente, giocatore, this);
+        chiavePartita = gestoreDb.nuovaPartita(this);
     }
 
     //Continua la partita
@@ -74,7 +74,7 @@ public class Gioco {
             }
 
             if(!giocatore.isVivo()) {
-                gestoreDb.salvaPartita(utente, giocatore, this);
+                gestoreDb.salvaPartita(this);
                 break;
             }
             gestoreClient.manda("\nRound "+ roundCorrente +" terminato");
@@ -99,7 +99,7 @@ public class Gioco {
             }
 
             roundCorrente += 1;
-            gestoreDb.salvaPartita(utente, giocatore, this);
+            gestoreDb.salvaPartita(this);
             System.out.println("gioco salvato");
         }
     }

@@ -66,9 +66,11 @@ public class GestoreDb {
         }
     }
 
-    public String nuovaPartita(Document utente, Giocatore giocatore, Gioco gioco){
+    public String nuovaPartita(Gioco gioco){
         //Verifico se esistono già partite create dall'utente
         int conteggio = 0;
+        Document utente = gioco.getUtente();
+        Giocatore giocatore = gioco.getGiocatore();
         for (Map.Entry<String, Object> entry : utente.entrySet()) {
             String chiave = entry.getKey();
             if (chiave.contains("partita")) {
@@ -99,7 +101,9 @@ public class GestoreDb {
         return "partita"+(conteggio+1);
     }
 
-    public void salvaPartita(Document utente, Giocatore giocatore, Gioco gioco) {
+    public void salvaPartita(Gioco gioco) {
+        Document utente = gioco.getUtente();
+        Giocatore giocatore = gioco.getGiocatore();
         // Preparo il documento da inserire
         Document partita = new Document("roundCorrente", gioco.getRoundCorrente())
                 .append("puntiVita", giocatore.getPuntiVita())
@@ -159,7 +163,7 @@ public class GestoreDb {
             Document documentOggetto = (Document) inventario.get(oggetto);
             int quantita = documentOggetto.getInteger("quantita", 0);
             if (quantita > 0) {
-                sb.append(documentOggetto.getString("nome")).append(": ").append(quantita).append("\n");
+                sb.append(documentOggetto.getString("nome")).append(" - ").append(documentOggetto.getString("descrizione")).append(": ").append(quantita).append("\n");
             }
         }
         return sb.toString();

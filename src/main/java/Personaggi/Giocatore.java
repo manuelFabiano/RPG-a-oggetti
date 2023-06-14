@@ -141,7 +141,7 @@ public class Giocatore extends PersonaggioCombattente {
                     "2. No\nPASS");
             String risposta = gestoreClient.ricevi();
             if(risposta.equals("1")){
-                setArma(arma);
+                this.arma = arma;
                 gestoreClient.manda("Hai equipaggiato la nuova arma!");
                 break;
             }else if(risposta.equals("2")){
@@ -188,10 +188,6 @@ public class Giocatore extends PersonaggioCombattente {
 
     public Arma getArma() {
         return arma;
-    }
-
-    public void setArma(Arma arma) {
-        this.arma = arma;
     }
 
     public int getSoldi() {

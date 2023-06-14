@@ -35,6 +35,7 @@ public class Brigante extends Umano{
                     if (nuova_scelta.equals("1")) {
                         getGestoreClient().manda("Il brigante non ti crede e ti attacca\n");
                         gioco.Combattimento(this);
+                        break;
                     } else if (nuova_scelta.equals("2")) {
                         int monete = random.nextInt(18)+2; //da 2 a 20 monete
                         if (gioco.getGiocatore().getSoldi() >= monete) {
@@ -42,6 +43,7 @@ public class Brigante extends Umano{
                             gioco.getGiocatore().decrementaSoldi(monete);
                             gioco.sleep();
                             getGestoreClient().manda("Brigante: hai fatto la scelta giusta, arrivederci!");
+                            break;
                         }else{
                             getGestoreClient().manda("Ma non hai niente, sei più povero di me!\n");
                             gioco.Combattimento(this);

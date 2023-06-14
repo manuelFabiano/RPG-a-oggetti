@@ -90,7 +90,7 @@ public abstract class Nemico extends PersonaggioCombattente {
     }
 
     /**
-     * Restituisce la flase detta dal nemico a inizio combattimento
+     * Restituisce la frase detta dal nemico a inizio combattimento
      */
     public abstract String getFrase();
 }

@@ -2,7 +2,7 @@ package Oggetti;
 
 public class Pozione extends Oggetto{
     private final String tipo;
-    private int punti;
+    private final int punti;
 
     public Pozione(String nome, String descrizione, String tipo, int punti) {
         super(nome, descrizione);

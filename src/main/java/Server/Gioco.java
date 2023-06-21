@@ -62,13 +62,13 @@ public class Gioco {
             //logica di gioco:
             tipoIncontro = random.nextInt(100)+1;
             //INCONTRO CASUALE
-            if(tipoIncontro <= 70) {
+            if(tipoIncontro <= 60) { //60%
                 incontroCasuale();
             }
-            else if (tipoIncontro <= 90) {
+            else if (tipoIncontro <= 85) { //25%
                 luogoCasuale();
             }else{
-                Mercante mercante = new Mercante(this);
+                Mercante mercante = new Mercante(this); //15%
                 gestoreClient.manda("Vagando hai incontrato la tenda di " + mercante.getNome() + " il mercante!" );
                 mercante.interagisci();
             }

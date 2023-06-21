@@ -3,10 +3,12 @@ package Personaggi;
 
 public class Goblin extends Inumano{
 
-    /*I nemici goblin saranno più deboli in attacco e in difesa rispetto agli altri, ma
-      avranno una statistica in Agilità più alta, quindi spesso attaccheranno prima */
+    /*I nemici goblin saranno più deboli in attacco e in difesa rispetto agli altri,
+     ma avranno una statistica in Agilità più alta, quindi spesso
+     attaccheranno prima */
     public Goblin(int livelloGiocatore) {
-        //Il costruttore della superclasse setta tutti i drop randomici, il tipo e il nome
+        //Il costruttore della superclasse setta tutti i drop randomici,
+        // il tipo e il nome
         super("Goblin", livelloGiocatore);
         //HP
         setPuntiVita(generaPuntiVita(livelloGiocatore, 6, 18));

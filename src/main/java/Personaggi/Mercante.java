@@ -23,18 +23,22 @@ public class Mercante extends Personaggio {
 
     public void interagisci() throws IOException {
         while(true) {
-            gestoreClient.manda("Mercante "+ getNome() +": Benvenuto nel mio negozio! Ecco cosa ho in vendita:\n");
+            gestoreClient.manda("Mercante "+ getNome() +
+                    ": Benvenuto nel mio negozio! Ecco cosa ho in vendita:\n");
             for (Map.Entry<Oggetto, Integer> entry : inventario.entrySet()) {
                 Oggetto oggetto = entry.getKey();
                 String nome = oggetto.getNome();
                 int quantita = entry.getValue();
                 int prezzo = oggetto.getPrezzo();
 
-                gestoreClient.manda(StringUtils.capitalize(nome) + " - Quantità disponibile: " + quantita + " - Prezzo: " + prezzo + " monete");
+                gestoreClient.manda(StringUtils.capitalize(nome) +
+                        " - Quantità disponibile: "
+                        + quantita + " - Prezzo: " + prezzo + " monete");
             }
 
             gestoreClient.manda("\nMonete: " + gioco.getGiocatore().getSoldi());
-            gestoreClient.manda("Cosa desideri acquistare? Inserisci il nome dell'oggetto o premi invio per uscire.\nPASS");
+            gestoreClient.manda("Cosa desideri acquistare?" +
+                    " Inserisci il nome dell'oggetto o premi invio per uscire.\nPASS");
 
             // Leggi l'input dell'utente
             String scelta = gestoreClient.ricevi();
@@ -53,7 +57,9 @@ public class Mercante extends Personaggio {
 
     private Map<Oggetto, Integer> generaInventarioCasuale() {
         Map<Oggetto, Integer> inventario = new HashMap<>();
-        String[] nomiOggetti = {"mela", "banana", "pane", "pollo", "cioccolato", "manzo", "pozione curativa", "superpozione curativa", "pozione di attacco", "pozione di difesa", "pozione di fuoco"};
+        String[] nomiOggetti = {"mela", "banana", "pane", "pollo", "cioccolato",
+                "manzo", "pozione curativa", "superpozione curativa",
+                "pozione di attacco", "pozione di difesa", "pozione di fuoco"};
 
         // Genera un numero casuale di oggetti presenti nell'inventario
         int numOggetti = random.nextInt(nomiOggetti.length) + 1;

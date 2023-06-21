@@ -28,7 +28,7 @@ import java.util.concurrent.Semaphore;
 public class GUI extends Application {
 
     private PrintWriter output;
-    private TextArea outputArea;
+    private TextArea input;
     private Label hpLabel;
     private Label levelLabel;
     private Label roundLabel;
@@ -43,7 +43,7 @@ public class GUI extends Application {
 
         inputField.setOnKeyPressed(event -> {
             if (event.getCode() == KeyCode.ENTER) {
-                    outputArea.clear();
+                    input.clear();
                     String clientResponse = inputField.getText();
                     sendMessageToServer(clientResponse);
                     inputField.clear();
@@ -51,9 +51,9 @@ public class GUI extends Application {
             }
         });
 
-        outputArea = new TextArea();
-        outputArea.setEditable(false);
-        outputArea.setStyle("-fx-font-family: Arial; -fx-font-size: 14px; -fx-text-fill: #333333; ");
+        input = new TextArea();
+        input.setEditable(false);
+        input.setStyle("-fx-font-family: Arial; -fx-font-size: 14px; -fx-text-fill: #333333; ");
 
         hpLabel = new Label("HP: -");
         levelLabel = new Label("Livello: -");
@@ -63,8 +63,8 @@ public class GUI extends Application {
         labelsBox.setAlignment(Pos.CENTER);
         labelsBox.setSpacing(10);
 
-        VBox vbox = new VBox(labelsBox, outputArea,  inputField);
-        VBox.setVgrow(outputArea, Priority.ALWAYS);
+        VBox vbox = new VBox(labelsBox, input,  inputField);
+        VBox.setVgrow(input, Priority.ALWAYS);
 
         vbox.setSpacing(10);
         vbox.setPadding(new Insets(10));
@@ -75,7 +75,7 @@ public class GUI extends Application {
         hpLabel.getStyleClass().add("status-label");
         levelLabel.getStyleClass().add("status-label");
         roundLabel.getStyleClass().add("status-label");
-        outputArea.setStyle("-fx-font-size: 18px;");
+        input.setStyle("-fx-font-size: 18px;");
 
 
 
@@ -105,8 +105,10 @@ public class GUI extends Application {
         try {
             Element serverElement = caricaXML();
 
-            String serverAddress = serverElement.getElementsByTagName("address").item(0).getTextContent(); // Indirizzo IP del server
-            int portNumber = Integer.parseInt(serverElement.getElementsByTagName("port").item(0).getTextContent()); // Porta del server
+            String serverAddress = serverElement.getElementsByTagName("address")
+                    .item(0).getTextContent(); // Indirizzo IP del server
+            int portNumber = Integer.parseInt(serverElement.getElementsByTagName("port")
+                    .item(0).getTextContent()); // Porta del server
 
             Socket socket = new Socket(serverAddress, portNumber);
             output = new PrintWriter(socket.getOutputStream(), true);
@@ -139,7 +141,7 @@ public class GUI extends Application {
 
     private void sendMessageToServer(String message) {
         try {
-            inputSemaphore.acquire(); // Attendere il rilascio del semaforo prima di inviare l'input
+            inputSemaphore.acquire(); // Attendere oil rilascio del semaforo prima di inviare l'input
             output.println(message);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -149,7 +151,7 @@ public class GUI extends Application {
     private void updateOutputArea(String text) {
         if (!text.startsWith("HP:") && !text.startsWith("Livello:") && !text.startsWith("Round:")) {
             if (!text.equals("PASS\n")) {
-                Platform.runLater(() -> outputArea.appendText(text + "\n"));
+                Platform.runLater(() -> input.appendText(text + "\n"));
             }
         } else {
         // Aggiorna i valori delle label HP, Livello e Round

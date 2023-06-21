@@ -24,10 +24,12 @@ public class Server {
 
                 while (true) {
                     Socket clientSocket = serverSocket.accept();
-                    System.out.println("Nuova connessione da: " + clientSocket.getInetAddress());
+                    System.out.println("Nuova connessione da: "
+                            + clientSocket.getInetAddress());
 
                     // Crea un nuovo thread per gestire la connessione del client
-                    GestoreClient gestoreClient = new GestoreClient(clientSocket, gestoreDb);
+                    GestoreClient gestoreClient = new GestoreClient(clientSocket,
+                            gestoreDb);
                     Thread thread = new Thread(gestoreClient);
                     thread.start();
                 }
@@ -47,16 +49,21 @@ public class Server {
         Element root = document.getDocumentElement();
 
         // Ottengo l'elemento "database"
-        Element databaseElement = (Element) root.getElementsByTagName("database").item(0);
+        Element databaseElement = (Element) root.getElementsByTagName("database")
+                .item(0);
 
         // Ottengo le informazioni di connessione al database
-        url = databaseElement.getElementsByTagName("url").item(0).getTextContent();
-        databaseName = databaseElement.getElementsByTagName("databaseName").item(0).getTextContent();
-        collectionName = databaseElement.getElementsByTagName("collectionName").item(0).getTextContent();
+        url = databaseElement.getElementsByTagName("url").item(0)
+                .getTextContent();
+        databaseName = databaseElement.getElementsByTagName("databaseName")
+                .item(0).getTextContent();
+        collectionName = databaseElement.getElementsByTagName("collectionName")
+                .item(0).getTextContent();
 
         // Ottengo l'elemento "server"
         Element serverElement = (Element) root.getElementsByTagName("server").item(0);
 
-        port = Integer.parseInt(serverElement.getElementsByTagName("port").item(0).getTextContent());
+        port = Integer.parseInt(serverElement.getElementsByTagName("port").item(0)
+                .getTextContent());
     }
 }

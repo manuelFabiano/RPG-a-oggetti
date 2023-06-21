@@ -1,6 +1,6 @@
 package Client;
 
-public class GUIStarter {
+public class Client {
 
     public static void main(final String[] args) {
         GUI.main(args);
